@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Markdown-LD* Playground</title>
+  <script src="../dist/index.browser.js"></script>
+  <style>
+    body { font-family: Arial, sans-serif; }
+    .tab { overflow: hidden; border: 1px solid #ccc; background-color: #f1f1f1; }
+    .tab button { background-color: inherit; float: left; border: none; outline: none; cursor: pointer; padding: 14px 16px; transition: 0.3s; }
+    .tab button:hover { background-color: #ddd; }
+    .tab button.active { background-color: #ccc; }
+    .tabcontent { display: none; padding: 6px 12px; border: 1px solid #ccc; border-top: none; }
+    textarea { width: 100%; height: 200px; }
+    select, button { margin: 10px 0; }
+  </style>
+</head>
+<body>
+  <h1>Markdown-LD* Playground</h1>
+  <p>Experiment with Markdown-LD*: Parse to RDF formats or convert RDF to Markdown-LD*. Inspired by JSON-LD Playground.</p>
+
+  <div class="tab">
+    <button class="tablinks" onclick="openTab(event, 'mdToRdf')">Markdown-LD to RDF</button>
+    <button class="tablinks" onclick="openTab(event, 'rdfToMd')">RDF to Markdown-LD</button>
+    <button class="tablinks" onclick="openTab(event, 'fetchUri')">Fetch URI to Markdown-LD</button>
+  </div>
+
+  <div id="mdToRdf" class="tabcontent">
+    <h2>Markdown-LD to RDF</h2>
+    <textarea id="mdInput" placeholder="Enter Markdown-LD here..."></textarea>
+    <select id="outputFormat">
+      <option value="turtle">Turtle</option>
+      <option value="jsonld">JSON-LD</option>
+      <option value="rdfjson">RDF/JSON</option>
+      <option value="jsonldstar">JSON-LD*</option>
+    </select>
+    <button onclick="parseMd()">Parse</button>
+    <pre id="rdfOutput"></pre>
+  </div>
+
+  <div id="rdfToMd" class="tabcontent">
+    <h2>RDF to Markdown-LD</h2>
+    <textarea id="rdfInput" placeholder="Enter RDF here (Turtle, JSON-LD, etc.)..."></textarea>
+    <select id="inputFormat">
+      <option value="turtle">Turtle</option>
+      <option value="jsonld">JSON-LD</option>
+      <option value="rdfjson">RDF/JSON</option>
+      <option value="jsonldstar">JSON-LD*</option>
+      <option value="n3">N3</option>
+      <option value="trig">TriG</option>
+    </select>
+    <button onclick="convertRdf()">Convert</button>
+    <pre id="mdOutput"></pre>
+  </div>
+
+  <div id="fetchUri" class="tabcontent">
+    <h2>Fetch URI to Markdown-LD</h2>
+    <input type="text" id="uriInput" placeholder="Enter RDF URI (e.g., https://example.org/data.ttl)" style="width: 100%;">
+    <select id="uriFormat">
+      <option value="turtle">Turtle</option>
+      <option value="jsonld">JSON-LD</option>
+      <option value="rdfjson">RDF/JSON</option>
+      <option value="jsonldstar">JSON-LD*</option>
+      <option value="n3">N3</option>
+      <option value="trig">TriG</option>
+    </select>
+    <button onclick="fetchAndConvert()">Fetch & Convert</button>
+    <pre id="uriOutput"></pre>
+  </div>
+
+  <script>
+    function openTab(evt, tabName) {
+      var i, tabcontent, tablinks;
+      tabcontent = document.getElementsByClassName("tabcontent");
+      for (i = 0; i < tabcontent.length; i++) {
+        tabcontent[i].style.display = "none";
+      }
+      tablinks = document.getElementsByClassName("tablinks");
+      for (i = 0; i < tablinks.length; i++) {
+        tablinks[i].className = tablinks[i].className.replace(" active", "");
+      }
+      document.getElementById(tabName).style.display = "block";
+      evt.currentTarget.className += " active";
+    }
+
+    function parseMd() {
+      const input = document.getElementById('mdInput').value;
+      const format = document.getElementById('outputFormat').value;
+      try {
+        const result = MarkdownLD.parseMarkdownLD(input, { format });
+        const output = typeof result.output === 'object' ? JSON.stringify(result.output, null, 2) : result.output;
+        document.getElementById('rdfOutput').textContent = output;
+      } catch (e) {
+        document.getElementById('rdfOutput').textContent = 'Error: ' + e.message;
+      }
+    }
+
+    async function convertRdf() {
+      const input = document.getElementById('rdfInput').value;
+      const format = document.getElementById('inputFormat').value;
+      try {
+        const md = await MarkdownLD.fromRDFToMarkdownLD(input, format);
+        document.getElementById('mdOutput').textContent = md;
+      } catch (e) {
+        document.getElementById('mdOutput').textContent = 'Error: ' + e.message;
+      }
+    }
+
+    async function fetchAndConvert() {
+      const uri = document.getElementById('uriInput').value;
+      const format = document.getElementById('uriFormat').value;
+      try {
+        const response = await fetch(uri);
+        if (!response.ok) throw new Error('Fetch failed');
+        const content = await response.text();
+        const md = await MarkdownLD.fromRDFToMarkdownLD(content, format);
+        document.getElementById('uriOutput').textContent = md;
+      } catch (e) {
+        document.getElementById('uriOutput').textContent = 'Error: ' + e.message;
+      }
+    }
+  </script>
+</body>
+</html>

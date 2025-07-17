@@ -21,9 +21,15 @@ export default [
     output: {
       file: 'dist/index.browser.js',
       format: 'umd',
-      name: 'MarkdownLDStar'
+      name: 'MarkdownLDStar',
+      globals: {},
+      footer: 'if (typeof window !== "undefined" && window.MarkdownLDStar === undefined && typeof MarkdownLDStar !== "undefined") { window.MarkdownLDStar = MarkdownLDStar; }'
     },
-    plugins: [typescript(), resolve({ browser: true }), commonjs()]
-    // No 'external' here!
+    plugins: [
+      resolve({ browser: true, preferBuiltins: false }),
+      commonjs(),
+      typescript()
+    ],
+    external: [] // Ensure nothing is external
   }
 ];

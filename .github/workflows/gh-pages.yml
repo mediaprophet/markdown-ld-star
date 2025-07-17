@@ -18,6 +18,9 @@ jobs:
       - run: npm ci
       - run: npm run build
       - name: Copy demos to dist
+          run: |
+            cp -r demos dist/
+            cp demos/index.html dist/index.html
         run: |
           cp -r demos dist/
       - name: Deploy

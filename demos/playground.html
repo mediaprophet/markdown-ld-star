@@ -9,6 +9,16 @@
 <body>
   <h1>Markdown-LD* Playground</h1>
   <p>Experiment with Markdown-LD*: Parse to RDF formats or convert RDF to Markdown-LD*.</p>
+  <div style="margin-bottom:1em; background:#23234a; padding:0.7em; border-radius:6px; color:#e6e6ff;">
+  <b>Markdown Syntax Ontology:</b>
+  <a href="../src/markdown-ontology.ttl" target="_blank">Turtle</a> |
+  <a href="../src/markdown-ontology.owl" target="_blank">OWL (sameAs mappings)</a> —
+  <span title="Standard Markdown">Standard</span>,
+  <span title="GitHub Flavored Markdown">GFM</span>,
+  <span title="Obsidian Markdown">Obsidian</span>
+  <br>
+  Use this ontology to annotate or parse Markdown documents by variant and features. The OWL file includes <code>owl:sameAs</code> links to common RDF ontologies.
+  </div>
 
   <div id="errorDisplay" style="color: #ff6666; display: none; margin-bottom: 10px;"></div>
   <div class="demo-container">

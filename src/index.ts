@@ -185,6 +185,55 @@ const parseValue = (value: string): N3.NamedNode | N3.BlankNode | N3.Literal | N
   return { output, constraints };
 }
 
+
+// Utility: Extract best label, description, and URL for a resource
+function getBestLabel(store: N3.Store, subj: N3.Term): string | undefined {
+  const labelPredicates = [
+    'http://www.w3.org/2000/01/rdf-schema#label',
+    'http://schema.org/name',
+    'http://purl.org/dc/terms/title',
+    'http://purl.org/dc/elements/1.1/title',
+    'http://ogp.me/ns#title',
+    'http://www.w3.org/2004/02/skos/core#prefLabel',
+    'http://xmlns.com/foaf/0.1/name',
+  ];
+  for (const pred of labelPredicates) {
+    const labels = store.getObjects(subj, namedNode(pred), null);
+    if (labels.length > 0 && labels[0].termType === 'Literal') return labels[0].value;
+  }
+  return undefined;
+}
+function getBestDescription(store: N3.Store, subj: N3.Term): string | undefined {
+  const descPredicates = [
+    'http://schema.org/description',
+    'http://purl.org/dc/terms/description',
+    'http://purl.org/dc/elements/1.1/description',
+    'http://ogp.me/ns#description',
+    'http://www.w3.org/2004/02/skos/core#definition',
+    'http://rdfs.org/sioc/ns#content',
+  ];
+  for (const pred of descPredicates) {
+    const descs = store.getObjects(subj, namedNode(pred), null);
+    if (descs.length > 0 && descs[0].termType === 'Literal') return descs[0].value;
+  }
+  return undefined;
+}
+function getBestURL(store: N3.Store, subj: N3.Term): string | undefined {
+  const urlPredicates = [
+    'http://schema.org/url',
+    'http://ogp.me/ns#url',
+    'http://xmlns.com/foaf/0.1/page',
+    'http://xmlns.com/foaf/0.1/homepage',
+    'http://www.w3.org/2006/vcard/ns#url',
+  ];
+  for (const pred of urlPredicates) {
+    const urls = store.getObjects(subj, namedNode(pred), null);
+    if (urls.length > 0 && urls[0].termType === 'NamedNode') return urls[0].value;
+    if (urls.length > 0 && urls[0].termType === 'Literal') return urls[0].value;
+  }
+  return undefined;
+}
+
 export async function fromRDFToMarkdownLD(input: string, inputFormat: InputFormat): Promise<string> {
   const store = new N3.Store();
 
@@ -198,11 +247,9 @@ export async function fromRDFToMarkdownLD(input: string, inputFormat: InputForma
     const parser = new N3.Parser({ format: 'N-Quads' });
     const quads = parser.parse(nquads);
     store.addQuads(quads);
-  };
+  }
 
-  // Skipped RDF/JSON-LD* streaming parse for now (rdfParse/textStream not defined)
-
-  // Generate Markdown-LD
+  // Collect namespaces
   const namespaceMap = new Map<string, string>();
   const uris = new Set<string>();
   (store.forEach as any)((quad: any, _store: any) => {
@@ -231,11 +278,25 @@ export async function fromRDFToMarkdownLD(input: string, inputFormat: InputForma
     sh: 'http://www.w3.org/ns/shacl#',
     schema: 'http://schema.org/',
     xsd: 'http://www.w3.org/2001/XMLSchema#',
+    dc: 'http://purl.org/dc/elements/1.1/',
+    dcterms: 'http://purl.org/dc/terms/',
+    og: 'http://ogp.me/ns#',
+    foaf: 'http://xmlns.com/foaf/0.1/',
+    prov: 'http://www.w3.org/ns/prov#',
+    doap: 'http://usefulinc.com/ns/doap#',
+    gr: 'http://purl.org/goodrelations/v1#',
+    skos: 'http://www.w3.org/2004/02/skos/core#',
+    cc: 'http://creativecommons.org/ns#',
+    vc: 'http://www.w3.org/2006/vcard/ns#',
+    ical: 'http://www.w3.org/2002/12/cal/ical#',
+    wf: 'http://www.w3.org/2005/01/wf/flow#',
+    time: 'http://www.w3.org/2006/time#',
+    tzont: 'http://www.w3.org/2006/timezone#',
   };
 
   let prefixCounter = 0;
   for (const uri of uris) {
-    const ns = uri.replace(/[^\/#][^\/]*$/, '');
+    const ns = uri.replace(/[^\/#[^\/]*$/, '');
     if (ns && !Array.from(namespaceMap.values()).includes(ns)) {
       let prefix = Object.keys(commonPrefixes).find(p => commonPrefixes[p] === ns);
       if (!prefix) prefix = `ns${prefixCounter++}`;
@@ -245,44 +306,21 @@ export async function fromRDFToMarkdownLD(input: string, inputFormat: InputForma
   if (!namespaceMap.has('ex')) namespaceMap.set('ex', 'http://example.org/');
   const prefixForNs = new Map(Array.from(namespaceMap, a => [a[1], a[0]]));
 
-  // Refactor getPrefixed to handle Term objects directly
+  // Helper to get prefixed name
   const getPrefixed = (term: N3.Term | N3.Quad): string => {
     if (isQuotedTriple(term)) {
-      // Recursively handle quoted triples
       return `<<${getPrefixed(term.subject)} ${getPrefixed(term.predicate)} ${getPrefixed(term.object)}>>`;
-    } else if (term.termType === 'NamedNode' || term.termType === 'BlankNode') {
+    } else if (term.termType === 'NamedNode') {
+      const ns = term.value.replace(/[^\/#[^\/]*$/, '');
+      const local = term.value.slice(ns.length);
+      const prefix = prefixForNs.get(ns);
+      return prefix ? `${prefix}:${local}` : term.value;
+    } else if (term.termType === 'BlankNode') {
       return term.value;
     } else if (term.termType === 'Literal') {
       return '"' + term.value + '"';
     } else {
       throw new Error('Unsupported term type');
-    }
-  };
-
-  // Correct property access for Quad_Subject
-  const getQuadSubject = (quad: N3.Quad): string => {
-    if (quad.subject.termType === 'NamedNode') {
-      return quad.subject.value;
-    } else {
-      throw new Error('Unsupported subject type');
-    }
-  };
-
-  // Correct property access for Quad_Predicate
-  const getQuadPredicate = (quad: N3.Quad): string => {
-    if (quad.predicate.termType === 'NamedNode') {
-      return quad.predicate.value;
-    } else {
-      throw new Error('Unsupported predicate type');
-    }
-  };
-
-  // Correct property access for Quad_Object
-  const getQuadObject = (quad: N3.Quad): string => {
-    if (quad.object.termType === 'NamedNode' || quad.object.termType === 'Literal') {
-      return quad.object.value;
-    } else {
-      throw new Error('Unsupported object type');
     }
   };
 
@@ -293,24 +331,37 @@ export async function fromRDFToMarkdownLD(input: string, inputFormat: InputForma
   }
   md += '\n';
 
-  // Typed nodes
+  // Typed nodes (render as Markdown-LD* blocks)
   const typedSubjects = store.getSubjects(namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), null, null).filter((s: N3.Term) => s.termType === 'NamedNode');
   for (const subj of typedSubjects) {
-    const label = getPrefixed(subj);
+    const label = getBestLabel(store, subj) || getPrefixed(subj);
     const types = store.getObjects(subj, namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), null);
     const type = types.length > 0 ? `typeof=${getPrefixed(types[0])}; ` : '';
-  const props = store.getQuads(subj, null, null, null).filter((q: N3.Quad) => q.predicate.termType === 'NamedNode' && !isQuotedTriple(q.object));
+    const desc = getBestDescription(store, subj);
+    const url = getBestURL(store, subj);
+    const props = store.getQuads(subj, null, null, null).filter((q: N3.Quad) => q.predicate.termType === 'NamedNode' && !isQuotedTriple(q.object));
 
     let nodeRepresentation = `[${label}]{`;
     nodeRepresentation += type;
+    if (desc) nodeRepresentation += `description="${desc}"; `;
+    if (url) nodeRepresentation += `url="${url}"; `;
     props.forEach((prop: N3.Quad) => {
       const p = getPrefixed(prop.predicate);
+      // Avoid duplicating label/desc/url
+      if ([
+        'rdfs:label', 'schema:name', 'dc:title', 'dcterms:title', 'og:title', 'skos:prefLabel', 'foaf:name',
+        'schema:description', 'dc:description', 'dcterms:description', 'og:description', 'skos:definition', 'sioc:content',
+        'schema:url', 'og:url', 'foaf:page', 'foaf:homepage', 'vc:url'
+      ].includes(p)) return;
       const o = prop.object.termType === 'Literal' ? `"${prop.object.value}"` : getPrefixed(prop.object);
       nodeRepresentation += `${p}=${o}; `;
     });
     nodeRepresentation = nodeRepresentation.trimEnd() + '}\n';
     md += nodeRepresentation;
   }
+
+  // Annotations, quoted triples, SHACL, etc. (unchanged)
+  // ...existing code...
 
   // Annotations
   const assertedQuads = store.getQuads(null, null, null, dataFactory.defaultGraph()).filter((q: N3.Quad) => q.subject.termType === 'NamedNode' && q.object.termType === 'NamedNode');
@@ -335,7 +386,7 @@ export async function fromRDFToMarkdownLD(input: string, inputFormat: InputForma
   const quotedSubjects = store.getQuads(null, null, null, null).filter((q: N3.Quad) => isQuotedTriple(q.subject) && store.countQuads(q.subject, null, null, null) === 0);
   for (const q of quotedSubjects) {
     if (isQuotedTriple(q.subject)) {
-  const subj = q.subject as N3.Quad;
+      const subj = q.subject as N3.Quad;
       const s = getPrefixed(subj.subject);
       const p = getPrefixed(subj.predicate);
       const o = getPrefixed(subj.object);
@@ -349,7 +400,7 @@ export async function fromRDFToMarkdownLD(input: string, inputFormat: InputForma
   const quotedObjects = store.getQuads(null, null, null, null).filter((q: N3.Quad) => isQuotedTriple(q.object));
   for (const q of quotedObjects) {
     if (isQuotedTriple(q.object)) {
-  const obj = q.object as N3.Quad;
+      const obj = q.object as N3.Quad;
       const s = getPrefixed(q.subject);
       const p = getPrefixed(q.predicate);
       const os = getPrefixed(obj.subject);

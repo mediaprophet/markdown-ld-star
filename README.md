@@ -1,3 +1,29 @@
+# Markdown-LD*  
+**A TypeScript/JavaScript library for parsing and serializing Markdown-LD* (Markdown with RDF-star/quoted triples) with support for RDF-star, JSON-LD, Turtle, and more.**
+
+## Markdown Syntax Ontology
+
+This project includes an RDF ontology describing Markdown syntax variants:
+
+- **Standard Markdown** ([md:StandardMarkdown](src/markdown-ontology.ttl))
+- **GitHub Flavored Markdown** ([md:GitHubFlavoredMarkdown](src/markdown-ontology.ttl))
+- **Obsidian Markdown** ([md:ObsidianMarkdown](src/markdown-ontology.ttl))
+
+See [`src/markdown-ontology.ttl`](src/markdown-ontology.ttl) (Turtle) and [`src/markdown-ontology.owl`](src/markdown-ontology.owl) (OWL with sameAs mappings) for details.
+
+Example (Turtle):
+
+```turtle
+@prefix md: <http://example.org/markdown#> .
+md:ObsidianMarkdown md:hasExtension md:wikilinks, md:callouts .
+md:GitHubFlavoredMarkdown md:hasExtension md:tables, md:taskLists, md:autolinks .
+```
+
+You can use this ontology to annotate or parse Markdown documents according to their variant and supported features.
+## Usage
+
+```javascript
+import { parseMarkdownLD } from 'markdown-ld-star';
 # markdown-ld-star
 
 A Node.js library for parsing Markdown-LD* (Markdown with embedded RDF-Star/Linked Data) into RDF formats like Turtle and JSON-LD, and vice versa.

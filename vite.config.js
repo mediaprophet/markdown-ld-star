@@ -17,7 +17,9 @@ export default defineConfig({
     viteStaticCopy({
       targets: [
         { src: '../dist/index.browser.js', dest: '.' },
-        { src: '../demos/*', dest: 'demos' }
+        { src: '../demos/*', dest: 'demos' },
+        { src: '../src/markdown-ontology.ttl', dest: 'src' },
+        { src: '../src/markdown-ontology.owl', dest: 'src' }
       ]
     })
   ]

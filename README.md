@@ -9,7 +9,14 @@ This project includes an RDF ontology describing Markdown syntax variants:
 - **GitHub Flavored Markdown** ([md:GitHubFlavoredMarkdown](src/markdown-ontology.ttl))
 - **Obsidian Markdown** ([md:ObsidianMarkdown](src/markdown-ontology.ttl))
 
-See [`src/markdown-ontology.ttl`](src/markdown-ontology.ttl) (Turtle) and [`src/markdown-ontology.owl`](src/markdown-ontology.owl) (OWL with sameAs mappings) for details.
+See the following ontology files and demos:
+
+- [`ontologies/markdown-ontology.ttl`](ontologies/markdown-ontology.ttl) — Turtle/RDF version
+- [`ontologies/markdown-ontology.owl`](ontologies/markdown-ontology.owl) — OWL version with sameAs mappings
+- [`demos/markdown-ontology.md`](demos/markdown-ontology.md) — Markdown-LD-Star demo (Turtle style)
+- [`demos/markdown-ontology-owl.md`](demos/markdown-ontology-owl.md) — Markdown-LD-Star demo (OWL style)
+
+These can be used for documentation, testing, and as examples of Markdown-LD-Star ontologies.
 
 Example (Turtle):
 

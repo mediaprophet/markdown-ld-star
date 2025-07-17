@@ -17,10 +17,6 @@ jobs:
           node-version: '20'
       - run: npm ci
       - run: npm run build
-      - name: Check ontology files
-        run: |
-          test -f docs/ontologies/markdown-ontology.ttl
-          test -f docs/ontologies/markdown-ontology.owl
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:

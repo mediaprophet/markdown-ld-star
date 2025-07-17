@@ -1,8 +1,13 @@
+    permissions:
+      contents: write
 name: Deploy to GitHub Pages
 
 on:
   push:
     branches: [main]
+
+permissions:
+  contents: write
 
 jobs:
   build-and-deploy:
@@ -14,7 +19,11 @@ jobs:
           node-version: '20'
       - run: npm ci
       - run: npm run build
+      - name: Copy demos to dist
+        run: |
+          cp -r demos dist/
       - name: Deploy
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: dist
+          token: ${{ secrets.GITHUB_TOKEN }}

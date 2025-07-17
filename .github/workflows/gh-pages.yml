@@ -28,8 +28,8 @@ jobs:
         run: npm run build
 
       - name: Copy Ontologies 📂
-        # Manually copy the ontologies directory to the build output
-        run: cp -r ontologies docs/ontologies
+        # Ensure docs directory exists, then copy the ontologies directory to the build output
+        run: mkdir -p docs && cp -r ontologies docs/ontologies
 
       - name: Verify Build Output 🔍
         run: ls -la docs docs/ontologies

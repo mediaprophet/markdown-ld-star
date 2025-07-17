@@ -5,7 +5,7 @@ import typescript from '@rollup/plugin-typescript';
 export default {
   input: 'src/index.ts',
   output: [
-    { file: 'dist/index.cjs', format: 'cjs', exports: 'default' },
+  { file: 'dist/index.cjs', format: 'cjs', exports: 'auto' },
     { file: 'dist/index.mjs', format: 'esm' },
     { file: 'dist/index.browser.js', format: 'umd', name: 'MarkdownLDStar' }
   ],

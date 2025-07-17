@@ -26,6 +26,8 @@
   "devDependencies": {
     "@types/jest": "^30.0.0",
     "@types/node": "^24.0.14",
+    "@types/rdfjs__parser-n3": "^2.0.0",
+    "@types/rdfjs__serializer-jsonld": "^2.0.0",
     "jest": "^30.0.4",
     "ts-jest": "^29.4.0",
     "typescript": "^5.8.3",

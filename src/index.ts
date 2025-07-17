@@ -1,6 +1,7 @@
 import * as N3 from 'n3';
 import Parser from '@rdfjs/parser-n3';
 import Serializer from '@rdfjs/serializer-jsonld';
+import { Quad } from '@rdfjs/types';
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkStringify from 'remark-stringify';
@@ -42,35 +43,37 @@ export function parseMarkdownLD(content: string, options: ParseOptions = {}): Pa
     return prefixes[prefix] ? `${prefixes[prefix]}${local}` : part;
   };
 
-  const parseValue = (value: string): N3.Term => {
-    if (value.startsWith('<<') && value.endsWith('>>')) {
-      const match = value.match(/<<\s*\[([^\]]+)\]\s+([^\s]+)\s+\[([^\]]+)\]\s*>>/);
-      if (match) {
-        const [, s, p, o] = match;
-        return quotedTriple(
-          namedNode(resolveUri(s)),
-          namedNode(resolveUri(p)),
-          namedNode(resolveUri(o))
-        );
-      }
-      throw new Error('Invalid quoted triple');
-    } else if (value.startsWith('"')) {
-      return literal(value.slice(1, -1));
-    } else {
-      return namedNode(resolveUri(value));
+const parseValue = (value: string): N3.Term => {
+  if (value.startsWith('<<') && value.endsWith('>>')) {
+    const match = value.match(/<<\s*\[([^\]]+)\]\s+([^\s]+)\s+\[([^\]]+)\]\s*>>/);
+    if (match) {
+      const [, s, p, o] = match;
+      return quotedTriple(
+        namedNode(resolveUri(s)),
+        namedNode(resolveUri(p)),
+        namedNode(resolveUri(o))
+      );
     }
-  };
+    throw new Error('Invalid quoted triple');
+  } else if (value.startsWith('"')) {
+    return literal(value.slice(1, -1));
+  } else if (value.startsWith('_:')) {
+    return blankNode(value.slice(2));
+  } else {
+    return namedNode(resolveUri(value));
+  }
+};
 
-  for (const node of ast.children) {
+ for (const node of ast.children) {
     if (node.type === 'definition' && node.label && node.url) {
       prefixes[node.label] = node.url;
     } else if (node.type === 'heading' && node.children[0]?.type === 'text') {
-      currentSection = node.children[0].value.toLowerCase();
+      currentSection = (node.children[0] as any).value.toLowerCase();
     } else if (node.type === 'paragraph' && currentSection?.includes('shacl constraint')) {
       const sparqlNode = node.children.find((c: any) => c.type === 'code' && c.lang === 'sparql');
-      if (sparqlNode) constraints.push(sparqlNode.value);
+      if (sparqlNode) constraints.push((sparqlNode as any).value);
     } else if (node.type === 'paragraph') {
-      const text = processor.stringify({ type: 'paragraph', children: node.children }).trim();
+      const text = processor.stringify({ type: 'root', children: [node] }).trim();
       // Node syntax: [Label]{typeof=type; prop=value; ...}
       const nodeMatch = text.match(/\[([^\]]+)\](?:\{([^}]+)\})?/);
       if (nodeMatch) {
@@ -85,10 +88,11 @@ export function parseMarkdownLD(content: string, options: ParseOptions = {}): Pa
             const [prefix, local] = key.includes(':') ? key.split(':') : ['ex', key];
             const predUri = resolveUri(`${prefix}:${local}`);
             const predicate = namedNode(predUri);
+            const object = parseValue(val) as Quad['object'];
             if (key === 'typeof') {
-              store.addQuad(subject, namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), parseValue(val));
+              store.addQuad(subject, namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), object);
             } else {
-              store.addQuad(subject, predicate, parseValue(val));
+              store.addQuad(subject, predicate, object);
             }
           }
         }
@@ -102,7 +106,7 @@ export function parseMarkdownLD(content: string, options: ParseOptions = {}): Pa
             namedNode(resolveUri(p)),
             namedNode(resolveUri(o))
           );
-          store.addQuad(qt, namedNode(resolveUri(q)), parseValue(r));
+          store.addQuad(qt, namedNode(resolveUri(q)), parseValue(r) as Quad['object']);
         }
         // Annotation syntax: [S] p [O] {| q r ; ... |}
         const annMatch = text.match(/\[([^\]]+)\]\s+([^\s]+)\s+\[([^\]]+)\]\s*\{\|\s*([^|]+)\s*\|}/);
@@ -110,7 +114,7 @@ export function parseMarkdownLD(content: string, options: ParseOptions = {}): Pa
           const [, s, p, o, anns] = annMatch;
           const sub = namedNode(resolveUri(s));
           const pred = namedNode(resolveUri(p));
-          const obj = namedNode(resolveUri(o));
+          const obj = parseValue(o) as Quad['object'];
           store.addQuad(sub, pred, obj); // Assert the triple
           const qt = quotedTriple(sub, pred, obj);
           const annProps = anns.split(';').map((a: string) => a.trim());
@@ -118,25 +122,25 @@ export function parseMarkdownLD(content: string, options: ParseOptions = {}): Pa
             if (!ann) continue;
             const [key, val] = ann.split('=').map((kv: string) => kv.trim());
             const annPred = namedNode(resolveUri(key));
-            store.addQuad(qt, annPred, parseValue(val));
+            store.addQuad(qt, annPred, parseValue(val) as Quad['object']);
           }
         }
       }
     }
   }
 
-  let output: string | any;
+let output: string | any;
   if (format === 'turtle') {
     const writer = new N3.Writer({ prefixes });
-    store.forEach((quad: N3.Quad) => writer.addQuad(quad));
+    writer.addQuads(store.getQuads(null, null, null, null));
     writer.end((error: Error | null, result: string) => {
       if (error) throw error;
       output = result;
     });
   } else if (format === 'jsonld') {
     const jsonldSerializer = new Serializer();
-    const quads = store.getQuads(null, null, null, null).map((quad: N3.Quad) => quad);
-    output = jsonldSerializer.transform(quads);
+    const quads = store.getQuads(null, null, null, null);
+    output = jsonldSerializer.transform(quads as any);
     output.metadata = LIBRARY_METADATA;
   } else if (format === 'rdfjson') {
     output = toRDFJSON(store);
@@ -158,7 +162,7 @@ export async function fromRDFToMarkdownLD(input: string, inputFormat: InputForma
     store.addQuads(quads);
   } else if (inputFormat === 'jsonld') {
     const doc = JSON.parse(input);
-    const nquads = await jsonld.toRDF(doc, {format: 'application/n-quads'});
+    const nquads = await jsonld.toRDF(doc, {format: 'application/n-quads'}) as string;
     const parser = new N3.Parser({format: 'N-Quads'});
     const quads = parser.parse(nquads);
     store.addQuads(quads);
@@ -175,7 +179,7 @@ export async function fromRDFToMarkdownLD(input: string, inputFormat: InputForma
           else if (obj.type === 'bnode') o = blankNode(obj.value.slice(2));
           else if (obj.type === 'literal') o = literal(obj.value, obj.lang || (obj.datatype ? namedNode(obj.datatype) : undefined));
           else continue;
-          store.addQuad(s, p, o);
+          store.addQuad(s, p, o as Quad['object']);
         }
       }
     }

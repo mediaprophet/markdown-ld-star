@@ -85,10 +85,53 @@ const md = await fromRDFToMarkdownLD(turtleInput, 'turtle');
 console.log(md);
 ```
 
-## Playground
-Try the interactive playground at https://yourusername.github.io/markdownld/playground.html
+
+## Playground & API Usage
+Try the interactive playground at https://mediaprophet.github.io/markdown-ld-star/playground.html
 
 - Tabs for parsing Markdown-LD to RDF formats, converting RDF to Markdown-LD, and fetching RDF from URI to convert to Markdown-LD*.
 - Uses the browser build of the library.
 - Example: Input Markdown-LD, select output format, parse.
 - Fetch: Enter a public RDF URI (e.g., Turtle file), select format, convert to Markdown-LD.
+
+### API-like Query via URL Parameters
+
+You can use the playground as a simple API for extracting specific fields or converting formats from remote RDF files using URL parameters:
+
+**Endpoint:** `/playground.html?uri=<RDF-URL>&field=<prefix:property>&format=<json|turtle|markdownld>`
+
+**Parameters:**
+- `uri`: The RDF resource to fetch (e.g., a Turtle file URL)
+- `field`: The property to extract (e.g., `foaf:name`)
+- `format`: The output format (`json`, `turtle`, or `markdownld`). Default is `markdownld`.
+
+**Examples:**
+
+Fetch a field as JSON:
+```
+https://mediaprophet.github.io/markdown-ld-star/playground.html?uri=https://raw.githubusercontent.com/dherault/semantic-graphql/refs/heads/master/examples/foaf/foaf.ttl&field=foaf:name&format=json
+```
+Response (JSON):
+```json
+{"foaf:name": "Alice"}
+```
+
+Fetch a field as Turtle:
+```
+https://mediaprophet.github.io/markdown-ld-star/playground.html?uri=https://raw.githubusercontent.com/dherault/semantic-graphql/refs/heads/master/examples/foaf/foaf.ttl&field=foaf:name&format=turtle
+```
+Response (Turtle):
+```
+<#this> foaf:name "Alice" .
+```
+
+Fetch a field as Markdown-LD*:
+```
+https://mediaprophet.github.io/markdown-ld-star/playground.html?uri=https://raw.githubusercontent.com/dherault/semantic-graphql/refs/heads/master/examples/foaf/foaf.ttl&field=foaf:name&format=markdownld
+```
+Response (Markdown-LD*):
+```
+[<#this>]{foaf:name="Alice"}
+```
+
+**Note:** The input format is auto-detected based on the file extension or content. The output format is controlled by the `format` parameter.

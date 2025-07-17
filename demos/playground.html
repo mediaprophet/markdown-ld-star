@@ -224,7 +224,8 @@
       const params = new URLSearchParams(window.location.search);
       const uri = params.get('uri');
       const field = params.get('field');
-      const format = (params.get('format') || 'markdownld').toLowerCase();
+  let format = (params.get('format') || 'markdownld').toLowerCase();
+  if (format === 'markdown-ld-star') format = 'markdownld';
       if (uri && field) {
         try {
           const corsProxy = 'https://corsproxy.io/?';
@@ -248,6 +249,8 @@
             output = JSON.stringify({ [field]: value }, null, 2);
           } else if (format === 'turtle') {
             output = `<#this> ${field} "${value}" .`;
+          } else if (format === 'markdownld') {
+            output = `[<#this>]{${field}="${value}"}`;
           } else {
             output = `[<#this>]{${field}="${value}"}`;
           }

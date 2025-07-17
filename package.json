@@ -8,7 +8,7 @@
   "browser": "dist/index.browser.js",
   "types": "dist/index.d.ts",
   "scripts": {
-  "build": "tsc && rollup -c && node copy-demos.cjs",
+  "build": "tsc && rollup -c && node copy-demos.cjs && vite build",
     "test": "jest",
     "prepublishOnly": "npm run build"
   },

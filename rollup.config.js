@@ -28,7 +28,7 @@ export default [
     plugins: [
       resolve({ browser: true, preferBuiltins: false }),
       commonjs(),
-      typescript()
+      typescript({ tsconfig: './tsconfig.json', module: 'ESNext' })
     ],
     external: [] // Ensure nothing is external
   }

@@ -42,7 +42,7 @@
   <h2>Quick Start (Browser)</h2>
   <pre><code>&lt;script src="dist/index.browser.js"&gt;&lt;/script&gt;
 &lt;script&gt;
-  const result = MarkdownLD.parseMarkdownLD(content);
+    const result = MarkdownLDStar.parseMarkdownLD(content);
 &lt;/script&gt;</code></pre>
 
   <h2>Quick Start (Node.js)</h2>
@@ -80,7 +80,7 @@ console.log(output);
       const input = document.getElementById('mdInput').value;
       const format = document.getElementById('outputFormat').value;
       try {
-        const result = MarkdownLD.parseMarkdownLD(input, { format });
+    const result = MarkdownLDStar.parseMarkdownLD(input, { format });
         const output = typeof result.output === 'object' ? JSON.stringify(result.output, null, 2) : result.output;
         document.getElementById('rdfOutput').textContent = output;
       } catch (e) {

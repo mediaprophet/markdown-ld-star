@@ -13,6 +13,13 @@ export default defineConfig({
       }
     }
   },
+  css: {
+    preprocessorOptions: {
+      css: {
+        additionalData: `@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@700&display=swap');`
+      }
+    }
+  },
   plugins: [
     viteStaticCopy({
       targets: [

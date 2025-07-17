@@ -138,6 +138,7 @@
       background: #23234a;
     }
   </style>
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script>
     function updateLineNumbers(textareaId, lineNumbersId) {
       const textarea = document.getElementById(textareaId);
@@ -262,11 +263,9 @@
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
       }, 100);
-    }
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-
-    // Initialize first tab
-    document.querySelector('.tablinks').className += ' active';
+  // Initialize first tab
+  document.querySelector('.tablinks').className += ' active';
+  document.getElementById('mdToRdf').style.display = 'block';
     document.getElementById('mdToRdf').style.display = 'block';
 
     // API-like query via URL parameters: ?uri=...&field=...&inputFormat=...&outputFormat=...

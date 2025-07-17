@@ -25,7 +25,9 @@ jobs:
 
       - name: Build Pages using Vite 🔨
         # This script uses vite.config.js to build the site into the /docs directory
-        run: npm run build
+        run: |
+          echo "Running npm run build (Vite):"
+          npm run build || { echo 'Vite build failed!'; exit 1; }
 
       - name: Debug Build Output 📋
         run: |

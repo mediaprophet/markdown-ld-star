@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <title>Markdown-LD* Playground</title>
-  <script src="../dist/index.browser.js"></script>
+  <script src="index.browser.js"></script>
   <link rel="stylesheet" href="lcars.css">
 </head>
 <body>
@@ -122,8 +122,9 @@
     async function fetchAndConvert() {
       const uri = document.getElementById('uriInput').value;
       const format = document.getElementById('uriFormat').value;
+      const corsProxy = 'https://corsproxy.io/?';
       try {
-        const response = await fetch(uri);
+        const response = await fetch(corsProxy + encodeURIComponent(uri));
         if (!response.ok) throw new Error('Fetch failed');
         const content = await response.text();
         const md = await MarkdownLDStar.fromRDFToMarkdownLD(content, format);

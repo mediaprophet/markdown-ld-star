@@ -18,8 +18,7 @@ export default defineConfig({
       targets: [
         { src: '../dist/index.browser.js', dest: '.' },
         { src: '../demos/*', dest: 'demos' },
-        { src: '../src/markdown-ontology.ttl', dest: 'src' },
-        { src: '../src/markdown-ontology.owl', dest: 'src' }
+  { src: '../ontologies/*', dest: 'ontologies' }
       ]
     })
   ]

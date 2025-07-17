@@ -1,0 +1,26 @@
+<?xml version="1.0"?>
+<rdf:RDF
+  xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+  xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
+  xmlns:owl="http://www.w3.org/2002/07/owl#"
+  xmlns:md="http://example.org/markdown#"
+  xmlns:schema="http://schema.org/"
+  xmlns:dc="http://purl.org/dc/elements/1.1/"
+  xmlns:dcterms="http://purl.org/dc/terms/"
+  xmlns:og="http://ogp.me/ns#"
+  xmlns:foaf="http://xmlns.com/foaf/0.1/"
+  xmlns:prov="http://www.w3.org/ns/prov#"
+  xmlns:doap="http://usefulinc.com/ns/doap#"
+  xmlns:gr="http://purl.org/goodrelations/v1#"
+  xmlns:skos="http://www.w3.org/2004/02/skos/core#"
+  xmlns:cc="http://creativecommons.org/ns#"
+  xmlns:vc="http://www.w3.org/2006/vcard/ns#"
+  xmlns:ical="http://www.w3.org/2002/12/cal/ical#"
+  xmlns:wf="http://www.w3.org/2005/01/wf/flow#"
+  xmlns:time="http://www.w3.org/2006/time#"
+  xmlns:tzont="http://www.w3.org/2006/timezone#"
+>
+
+...existing ontology content...
+
+</rdf:RDF>

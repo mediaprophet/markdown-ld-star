@@ -5,9 +5,12 @@
   <title>Markdown-LD* Playground</title>
   <script src="../index.browser.js"></script>
   <link rel="stylesheet" href="style.css">
+  <!-- Chota theme toggle support -->
+  <link id="theme-link" rel="stylesheet" href="https://unpkg.com/chota@latest" disabled>
 </head>
 <body>
   <canvas id="codeRain"></canvas>
+  <button id="theme-toggle" style="position:fixed;top:18px;right:18px;z-index:1000;background:#222;color:#fff;border:2px solid #0f0;border-radius:8px;padding:8px 16px;box-shadow:0 0 10px #0f0;cursor:pointer;">Toggle Dark Mode</button>
   <h1>Markdown-LD* Playground</h1>
   <p>Explore Markdown-LD* in a cyberpunk matrix of linked data. Parse, convert, and fetch in the infosphere 'web of data'.</p>
   <div style="margin-bottom:1em; background:#23234a; padding:0.7em; border-radius:6px; color:#e6e6ff;">
@@ -22,6 +25,13 @@
   </div>
 
   <div id="errorDisplay" style="color: #ff6666; display: none; margin-bottom: 10px;"></div>
+  <div id="loadingSpinner" style="display:none;position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);z-index:2000;">
+    <svg width="60" height="60" viewBox="0 0 50 50">
+      <circle cx="25" cy="25" r="20" fill="none" stroke="#0ff" stroke-width="5" stroke-linecap="round" stroke-dasharray="31.4 31.4" transform="rotate(-90 25 25)">
+        <animateTransform attributeName="transform" type="rotate" from="0 25 25" to="360 25 25" dur="1s" repeatCount="indefinite"/>
+      </circle>
+    </svg>
+  </div>
   <div class="demo-container">
     <div class="demo-sidebar">
       <h3>Demo Files</h3>
@@ -140,6 +150,20 @@
   </style>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script>
+    // Theme toggle logic
+    document.addEventListener('DOMContentLoaded', () => {
+      const themeToggle = document.getElementById('theme-toggle');
+      const themeLink = document.getElementById('theme-link');
+      const lightTheme = 'https://unpkg.com/chota@latest';
+      const darkTheme = 'https://unpkg.com/chota@latest/dist/dark.css';
+      let dark = false;
+      themeToggle.addEventListener('click', () => {
+        dark = !dark;
+        themeLink.removeAttribute('disabled');
+        themeLink.setAttribute('href', dark ? darkTheme : lightTheme);
+        themeToggle.textContent = dark ? 'Toggle Light Mode' : 'Toggle Dark Mode';
+      });
+    });
     function updateLineNumbers(textareaId, lineNumbersId) {
       const textarea = document.getElementById(textareaId);
       const lineNumbers = document.getElementById(lineNumbersId);
@@ -166,10 +190,12 @@
       evt.currentTarget.className += " active";
     }
 
+
     function showError(message) {
       const errorDisplay = document.getElementById('errorDisplay');
-      errorDisplay.textContent = `Error: ${message}`;
+      errorDisplay.textContent = `❌ ${message}`;
       errorDisplay.style.display = 'block';
+      hideSpinner();
     }
 
     function clearError() {
@@ -178,17 +204,27 @@
       errorDisplay.style.display = 'none';
     }
 
+    function showSpinner() {
+      document.getElementById('loadingSpinner').style.display = 'block';
+    }
+    function hideSpinner() {
+      document.getElementById('loadingSpinner').style.display = 'none';
+    }
+
     async function loadDemo(file) {
       clearError();
+      showSpinner();
       try {
-  const response = await fetch(`${file}`);
-        if (!response.ok) throw new Error('Failed to load demo');
+        const response = await fetch(`${file}`);
+        if (!response.ok) throw new Error('Failed to load demo file. Please check your connection or try again.');
         const content = await response.text();
         document.getElementById('mdInput').value = content;
         openTab({ currentTarget: document.querySelector('.tablinks') }, 'mdToRdf');
         parseMd();
       } catch (e) {
         showError(e.message);
+      } finally {
+        hideSpinner();
       }
     }
 
@@ -196,12 +232,15 @@
       clearError();
       const input = document.getElementById('mdInput').value;
       const format = document.getElementById('outputFormat').value;
+      showSpinner();
       try {
         const result = MarkdownLDStar.parseMarkdownLD(input, { format });
         const output = typeof result.output === 'object' ? JSON.stringify(result.output, null, 2) : result.output;
         document.getElementById('rdfOutput').textContent = output;
       } catch (e) {
-        showError(e.message);
+        showError('Failed to parse Markdown-LD*. ' + e.message);
+      } finally {
+        hideSpinner();
       }
     }
 
@@ -209,11 +248,14 @@
       clearError();
       const input = document.getElementById('rdfInput').value;
       const format = document.getElementById('inputFormat').value;
+      showSpinner();
       try {
         const md = await MarkdownLDStar.fromRDFToMarkdownLD(input, format);
         document.getElementById('mdOutput').textContent = md;
       } catch (e) {
-        showError(e.message);
+        showError('Failed to convert RDF to Markdown-LD*. ' + e.message);
+      } finally {
+        hideSpinner();
       }
     }
 
@@ -223,9 +265,10 @@
       const uri = document.getElementById('uriInput').value;
       const format = document.getElementById('uriFormat').value;
       const corsProxy = 'https://corsproxy.io/?';
+      showSpinner();
       try {
         const response = await fetch(corsProxy + encodeURIComponent(uri));
-        if (!response.ok) throw new Error('Fetch failed');
+        if (!response.ok) throw new Error('Failed to fetch URI. Please check the address or your connection.');
         const content = await response.text();
         const md = await MarkdownLDStar.fromRDFToMarkdownLD(content, format);
         document.getElementById('uriOutput').textContent = md;
@@ -241,7 +284,9 @@
           document.getElementById('downloadMdBtn').style.display = 'none';
         }
       } catch (e) {
-        showError(e.message);
+        showError('Failed to fetch or convert URI. ' + e.message);
+      } finally {
+        hideSpinner();
       }
     }
 

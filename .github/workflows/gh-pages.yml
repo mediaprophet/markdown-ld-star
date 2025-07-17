@@ -23,19 +23,16 @@ jobs:
       - name: Install Dependencies 📦
         run: npm ci
 
-      - name: Install Build Helpers 🔧
-        run: |
-          npm install rollup-plugin-polyfill-node --save-dev
-          npm install fs-extra --save-dev
-
-      - name: Build Project 🔨
-        run: npm run build
+      - name: Build Pages using Vite 🔨
+        # This script uses vite.config.js to build the site into the /docs directory
+        run: npm run build-pages
 
       - name: Verify Build Output 🔍
-        run: ls -la dist dist/demos
+        run: ls -la docs
 
       - name: Deploy to GitHub Pages 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: dist
+          # Deploy the 'docs' folder, which is the output from the Vite build
+          folder: docs
           token: ${{ secrets.GITHUB_TOKEN }}

@@ -9,7 +9,8 @@ export default defineConfig({
     rollupOptions: {
       input: {
         main: 'demos/index.html',
-        playground: 'demos/playground.html'
+        playground: 'demos/playground.html',
+        'playground-root': 'demos/playground.html'
       }
     }
   },
@@ -26,7 +27,9 @@ export default defineConfig({
         { src: '../dist/index.browser.js', dest: '.' },
         { src: '../demos/*', dest: 'demos' },
         { src: 'style.css', dest: 'demos' },
-        { src: '../ontologies/*', dest: 'ontologies' }
+        { src: '../ontologies/*', dest: 'ontologies' },
+        // Copy playground.html to root as playground.html
+        { src: 'playground.html', dest: '.' }
       ]
     })
   ]

@@ -263,6 +263,8 @@
         document.body.removeChild(a);
         URL.revokeObjectURL(url);
       }, 100);
+    } // <-- Add this closing brace for downloadMdFile
+
   // Initialize first tab
   document.querySelector('.tablinks').className += ' active';
   document.getElementById('mdToRdf').style.display = 'block';

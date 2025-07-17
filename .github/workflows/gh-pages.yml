@@ -11,15 +11,31 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - name: Checkout 🛎️
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js 🏗️
+        uses: actions/setup-node@v4
         with:
           node-version: '20'
-      - run: npm ci
-      - run: npm run build
-      - run: ls -la docs
-      - name: Deploy
+          cache: 'npm'
+
+      - name: Install Dependencies 📦
+        run: npm ci
+
+      # The rollup.config.js requires this polyfill for browser builds.
+      # This ensures it's available in the CI environment.
+      - name: Install Rollup Polyfill 🔧
+        run: npm install rollup-plugin-polyfill-node --save-dev
+
+      - name: Build Project 🔨
+        run: npm run build
+
+      - name: Verify Build Output 🔍
+        run: ls -la dist
+
+      - name: Deploy to GitHub Pages 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: docs
+          folder: dist # Deploy the 'dist' folder
           token: ${{ secrets.GITHUB_TOKEN }}

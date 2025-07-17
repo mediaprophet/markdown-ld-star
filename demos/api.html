@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Markdown-LD* API Demo</title>
+  <script src="../index.browser.js"></script>
+  <link rel="stylesheet" href="lcars.css">
+</head>
+<body>
+  <h1>Markdown-LD* API Demo</h1>
+  <p>This page demonstrates API-like usage of the playground via URL parameters.<br>
+  See the <a href="../README.md">README</a> for full documentation.</p>
+  <div id="errorDisplay" style="color: #ff6666; display: none; margin-bottom: 10px;"></div>
+  <pre id="apiOutput" style="overflow-x: auto; max-width: 100%; background: #222233; color: #e6e6ff; padding: 1em; border-radius: 6px;"></pre>
+  <script>
+    (async function apiQueryFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      const uri = params.get('uri');
+      const field = params.get('field');
+      const inputFormat = params.get('inputFormat');
+      let outputFormat = (params.get('outputFormat') || 'markdownld').toLowerCase();
+      if (outputFormat === 'markdown-ld-star') outputFormat = 'markdownld';
+      const errorDisplay = document.getElementById('errorDisplay');
+      function showError(msg) {
+        errorDisplay.textContent = 'Error: ' + msg;
+        errorDisplay.style.display = 'block';
+      }
+      if (uri && field) {
+        if (!inputFormat) {
+          showError('Missing required inputFormat parameter (e.g., inputFormat=turtle, jsonld, etc.)');
+          return;
+        }
+        try {
+          const corsProxy = 'https://corsproxy.io/?';
+          const response = await fetch(corsProxy + encodeURIComponent(uri));
+          if (!response.ok) throw new Error('Fetch failed');
+          const content = await response.text();
+          const jsonld = await MarkdownLDStar.fromRDFToMarkdownLD(content, inputFormat);
+          const data = typeof jsonld === 'string' ? JSON.parse(jsonld) : jsonld;
+          let value = null;
+          if (data && data['@graph']) {
+            for (const node of data['@graph']) {
+              if (node[field]) {
+                value = node[field];
+                break;
+              }
+            }
+          }
+          let output = '';
+          if (outputFormat === 'json') {
+            output = JSON.stringify({ [field]: value }, null, 2);
+          } else if (outputFormat === 'turtle') {
+            output = `<#this> ${field} \"${value}\" .`;
+          } else if (outputFormat === 'markdownld') {
+            output = `[<#this>]{${field}=\"${value}\"}`;
+          } else {
+            output = `[<#this>]{${field}=\"${value}\"}`;
+          }
+          document.getElementById('apiOutput').textContent = output;
+        } catch (e) {
+          showError(e.message);
+        }
+      } else {
+        showError('Missing required parameters: uri and field.');
+      }
+    })();
+  </script>
+</body>
+</html>

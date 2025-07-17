@@ -25,7 +25,7 @@ See `demos/` for samples: schema-org, rdf-star, shacl.
 Live demo: https://mediaprophet.github.io/markdown-ld-star//
 
 ## Browser Usage
-```html
+Try the interactive playground at https://mediaprophet.github.io/markdown-ld-star/demos/playground.html
 <script src="dist/index.browser.js"></script>
 <script>
   const result = MarkdownLD.parseMarkdownLD(content);
@@ -34,15 +34,12 @@ Live demo: https://mediaprophet.github.io/markdown-ld-star//
 
 ## Installation
 
-```bash
-npm install markdownld
-```
 
 ## Usage
 
 ```javascript
 import { parseMarkdownLD } from 'markdown-ld-star';
-
+https://mediaprophet.github.io/markdown-ld-star/demos/playground.html?uri=https://raw.githubusercontent.com/dherault/semantic-graphql/refs/heads/master/examples/foaf/foaf.ttl&field=foaf:name&format=json
 const content = `
 [ex]: http://example.org/
 [Node]{typeof=ex:Type; prop="value"}
@@ -51,7 +48,7 @@ const content = `
 const { output, constraints } = parseMarkdownLD(content, { format: 'turtle' });
 console.log(output);
 ```
-
+https://mediaprophet.github.io/markdown-ld-star/demos/playground.html?uri=https://raw.githubusercontent.com/dherault/semantic-graphql/refs/heads/master/examples/foaf/foaf.ttl&field=foaf:name&format=turtle
 ### convert RDF to Markddown-ld*
 
 ```javascript
@@ -60,7 +57,7 @@ import { fromRDFToMarkdownLD } from 'markdown-ld-star';
 const turtleInput = `@prefix ex: <http://example.org/> . ex:Person a ex:Type .`;
 const md = await fromRDFToMarkdownLD(turtleInput, 'turtle');
 console.log(md);
-```
+https://mediaprophet.github.io/markdown-ld-star/demos/playground.html?uri=https://raw.githubusercontent.com/dherault/semantic-graphql/refs/heads/master/examples/foaf/foaf.ttl&field=foaf:name&format=markdownld
 
 ## Tests
 ```bash
@@ -87,7 +84,7 @@ console.log(md);
 
 
 ## Playground & API Usage
-Try the interactive playground at https://mediaprophet.github.io/markdown-ld-star/playground.html
+Try the interactive playground at https://mediaprophet.github.io/markdown-ld-star/demos/playground.html
 
 - Tabs for parsing Markdown-LD to RDF formats, converting RDF to Markdown-LD, and fetching RDF from URI to convert to Markdown-LD*.
 - Uses the browser build of the library.
@@ -98,18 +95,19 @@ Try the interactive playground at https://mediaprophet.github.io/markdown-ld-sta
 
 You can use the playground as a simple API for extracting specific fields or converting formats from remote RDF files using URL parameters:
 
-**Endpoint:** `/playground.html?uri=<RDF-URL>&field=<prefix:property>&format=<json|turtle|markdownld>`
+**Endpoint:** `/demos/playground.html?uri=<RDF-URL>&field=<prefix:property>&inputFormat=<turtle|jsonld|rdfjson|n3|trig>&outputFormat=<json|turtle|markdownld>`
 
 **Parameters:**
 - `uri`: The RDF resource to fetch (e.g., a Turtle file URL)
 - `field`: The property to extract (e.g., `foaf:name`)
-- `format`: The output format (`json`, `turtle`, or `markdownld`). Default is `markdownld`.
+- `inputFormat`: The input RDF serialization format (e.g., `turtle`, `jsonld`, `rdfjson`, `n3`, `trig`). **Required.**
+- `outputFormat`: The output format (`json`, `turtle`, or `markdownld`). Default is `markdownld`.
 
 **Examples:**
 
 Fetch a field as JSON:
 ```
-https://mediaprophet.github.io/markdown-ld-star/playground.html?uri=https://raw.githubusercontent.com/dherault/semantic-graphql/refs/heads/master/examples/foaf/foaf.ttl&field=foaf:name&format=json
+https://mediaprophet.github.io/markdown-ld-star/demos/playground.html?uri=https://raw.githubusercontent.com/dherault/semantic-graphql/refs/heads/master/examples/foaf/foaf.ttl&field=foaf:name&inputFormat=turtle&outputFormat=json
 ```
 Response (JSON):
 ```json
@@ -118,7 +116,7 @@ Response (JSON):
 
 Fetch a field as Turtle:
 ```
-https://mediaprophet.github.io/markdown-ld-star/playground.html?uri=https://raw.githubusercontent.com/dherault/semantic-graphql/refs/heads/master/examples/foaf/foaf.ttl&field=foaf:name&format=turtle
+https://mediaprophet.github.io/markdown-ld-star/demos/playground.html?uri=https://raw.githubusercontent.com/dherault/semantic-graphql/refs/heads/master/examples/foaf/foaf.ttl&field=foaf:name&inputFormat=turtle&outputFormat=turtle
 ```
 Response (Turtle):
 ```
@@ -127,11 +125,11 @@ Response (Turtle):
 
 Fetch a field as Markdown-LD*:
 ```
-https://mediaprophet.github.io/markdown-ld-star/playground.html?uri=https://raw.githubusercontent.com/dherault/semantic-graphql/refs/heads/master/examples/foaf/foaf.ttl&field=foaf:name&format=markdownld
+https://mediaprophet.github.io/markdown-ld-star/demos/playground.html?uri=https://raw.githubusercontent.com/dherault/semantic-graphql/refs/heads/master/examples/foaf/foaf.ttl&field=foaf:name&inputFormat=turtle&outputFormat=markdownld
 ```
 Response (Markdown-LD*):
 ```
 [<#this>]{foaf:name="Alice"}
 ```
 
-**Note:** The input format is auto-detected based on the file extension or content. The output format is controlled by the `format` parameter.
+**Note:** The input format is required. The output format is controlled by the `outputFormat` parameter.

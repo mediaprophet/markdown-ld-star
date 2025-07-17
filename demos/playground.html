@@ -219,21 +219,26 @@
     document.querySelector('.tablinks').className += ' active';
     document.getElementById('mdToRdf').style.display = 'block';
 
-    // API-like query via URL parameters: ?uri=...&field=...&format=...
+    // API-like query via URL parameters: ?uri=...&field=...&inputFormat=...&outputFormat=...
     (async function apiQueryFromUrl() {
       const params = new URLSearchParams(window.location.search);
       const uri = params.get('uri');
       const field = params.get('field');
-  let format = (params.get('format') || 'markdownld').toLowerCase();
-  if (format === 'markdown-ld-star') format = 'markdownld';
+      const inputFormat = params.get('inputFormat');
+      let outputFormat = (params.get('outputFormat') || 'markdownld').toLowerCase();
+      if (outputFormat === 'markdown-ld-star') outputFormat = 'markdownld';
       if (uri && field) {
+        if (!inputFormat) {
+          showError('Missing required inputFormat parameter (e.g., inputFormat=turtle, jsonld, etc.)');
+          return;
+        }
         try {
           const corsProxy = 'https://corsproxy.io/?';
           const response = await fetch(corsProxy + encodeURIComponent(uri));
           if (!response.ok) throw new Error('Fetch failed');
           const content = await response.text();
           // Always convert to JSON-LD for field extraction
-          const jsonld = await MarkdownLDStar.fromRDFToMarkdownLD(content, 'jsonld');
+          const jsonld = await MarkdownLDStar.fromRDFToMarkdownLD(content, inputFormat);
           const data = typeof jsonld === 'string' ? JSON.parse(jsonld) : jsonld;
           let value = null;
           if (data && data['@graph']) {
@@ -245,14 +250,14 @@
             }
           }
           let output = '';
-          if (format === 'json') {
+          if (outputFormat === 'json') {
             output = JSON.stringify({ [field]: value }, null, 2);
-          } else if (format === 'turtle') {
-            output = `<#this> ${field} "${value}" .`;
-          } else if (format === 'markdownld') {
-            output = `[<#this>]{${field}="${value}"}`;
+          } else if (outputFormat === 'turtle') {
+            output = `<#this> ${field} \"${value}\" .`;
+          } else if (outputFormat === 'markdownld') {
+            output = `[<#this>]{${field}=\"${value}\"}`;
           } else {
-            output = `[<#this>]{${field}="${value}"}`;
+            output = `[<#this>]{${field}=\"${value}\"}`;
           }
           document.getElementById('uriOutput').textContent = output;
           openTab({ currentTarget: document.querySelectorAll('.tablinks')[2] }, 'fetchUri');

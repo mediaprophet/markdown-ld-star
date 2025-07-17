@@ -60,7 +60,7 @@
           </select>
           <button onclick="convertRdf()">Convert</button>
         </div>
-        <pre id="mdOutput"></pre>
+  <pre id="mdOutput" style="overflow-x: auto; max-width: 100%;"></pre>
       </div>
 
       <div id="fetchUri" class="tabcontent" style="display: none;">
@@ -75,7 +75,7 @@
           <option value="trig">TriG</option>
         </select>
         <button onclick="fetchAndConvert()">Fetch & Convert</button>
-        <pre id="uriOutput"></pre>
+  <pre id="uriOutput" style="overflow-x: auto; max-width: 100%;"></pre>
       </div>
     </div>
   </div>
@@ -163,7 +163,7 @@
     async function loadDemo(file) {
       clearError();
       try {
-        const response = await fetch(`demos/${file}`);
+  const response = await fetch(`${file}`);
         if (!response.ok) throw new Error('Failed to load demo');
         const content = await response.text();
         document.getElementById('mdInput').value = content;
@@ -218,6 +218,46 @@
     // Initialize first tab
     document.querySelector('.tablinks').className += ' active';
     document.getElementById('mdToRdf').style.display = 'block';
+
+    // API-like query via URL parameters: ?uri=...&field=...&format=...
+    (async function apiQueryFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      const uri = params.get('uri');
+      const field = params.get('field');
+      const format = (params.get('format') || 'markdownld').toLowerCase();
+      if (uri && field) {
+        try {
+          const corsProxy = 'https://corsproxy.io/?';
+          const response = await fetch(corsProxy + encodeURIComponent(uri));
+          if (!response.ok) throw new Error('Fetch failed');
+          const content = await response.text();
+          // Always convert to JSON-LD for field extraction
+          const jsonld = await MarkdownLDStar.fromRDFToMarkdownLD(content, 'jsonld');
+          const data = typeof jsonld === 'string' ? JSON.parse(jsonld) : jsonld;
+          let value = null;
+          if (data && data['@graph']) {
+            for (const node of data['@graph']) {
+              if (node[field]) {
+                value = node[field];
+                break;
+              }
+            }
+          }
+          let output = '';
+          if (format === 'json') {
+            output = JSON.stringify({ [field]: value }, null, 2);
+          } else if (format === 'turtle') {
+            output = `<#this> ${field} "${value}" .`;
+          } else {
+            output = `[<#this>]{${field}="${value}"}`;
+          }
+          document.getElementById('uriOutput').textContent = output;
+          openTab({ currentTarget: document.querySelectorAll('.tablinks')[2] }, 'fetchUri');
+        } catch (e) {
+          showError(e.message);
+        }
+      }
+    })();
   </script>
 </body>
 </html>

@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Markdown-LD* Playground</title>
+  <script src="index.browser.js"></script>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <canvas id="codeRain"></canvas>
+  <h1>Markdown-LD* Playground</h1>
+  <p>Explore Markdown-LD* in a cyberpunk matrix of linked data. Parse, convert, and fetch in a holographic web.</p>
+  <div id="errorDisplay" style="color: #ff6666; display: none; margin-bottom: 10px;"></div>
+
+  <div class="demo-container">
+    <div class="demo-sidebar">
+      <h3>Demo Files</h3>
+      <button onclick="loadDemo('schema-org-sample.md')">Schema.org</button>
+      <button onclick="loadDemo('rdf-star-sample.md')">RDF-Star</button>
+      <button onclick="loadDemo('shacl-sample.md')">SHACL</button>
+    </div>
+    <div style="flex: 1;">
+      <div class="tab">
+        <button class="tablinks active" onclick="openTab(event, 'mdToRdf')">Markdown-LD* to RDF</button>
+        <button class="tablinks" onclick="openTab(event, 'rdfToMd')">RDF to Markdown-LD*</button>
+        <button class="tablinks" onclick="openTab(event, 'fetchUri')">Fetch URI to Markdown-LD*</button>
+      </div>
+
+      <div id="mdToRdf" class="tabcontent">
+        <h2>Markdown-LD* to RDF</h2>
+        <textarea id="mdInput" placeholder="Enter Markdown-LD* here..."></textarea>
+        <select id="outputFormat">
+          <option value="turtle">Turtle</option>
+          <option value="jsonld">JSON-LD</option>
+          <option value="rdfjson">RDF/JSON</option>
+          <option value="jsonldstar">JSON-LD*</option>
+        </select>
+        <button onclick="parseMd()">Parse</button>
+        <pre id="rdfOutput" onmouseover="showGraphPreview(this)"></pre>
+      </div>
+
+      <div id="rdfToMd" class="tabcontent" style="display: none;">
+        <h2>RDF to Markdown-LD*</h2>
+        <textarea id="rdfInput" placeholder="Enter RDF here (Turtle, JSON-LD, etc.)..."></textarea>
+        <select id="inputFormat">
+          <option value="turtle">Turtle</option>
+          <option value="jsonld">JSON-LD</option>
+          <option value="rdfjson">RDF/JSON</option>
+          <option value="jsonldstar">JSON-LD*</option>
+          <option value="n3">N3</option>
+          <option value="trig">TriG</option>
+        </select>
+        <button onclick="convertRdf()">Convert</button>
+        <pre id="mdOutput" onmouseover="showGraphPreview(this)"></pre>
+      </div>
+
+      <div id="fetchUri" class="tabcontent" style="display: none;">
+        <h2>Fetch URI to Markdown-LD*</h2>
+        <p style="color: #ffcc66;">Note: URIs must support CORS (e.g., public RDF files).</p>
+        <input type="text" id="uriInput" placeholder="Enter RDF URI (e.g., https://example.org/data.ttl)">
+        <select id="uriFormat">
+          <option value="turtle">Turtle</option>
+          <option value="jsonld">JSON-LD</option>
+          <option value="rdfjson">RDF/JSON</option>
+          <option value="jsonldstar">JSON-LD*</option>
+          <option value="n3">N3</option>
+          <option value="trig">TriG</option>
+        </select>
+        <button onclick="fetchAndConvert()">Fetch & Convert</button>
+        <pre id="uriOutput" onmouseover="showGraphPreview(this)"></pre>
+      </div>
+    </div>
+  </div>
+
+  <svg id="graphPreview" style="position: absolute; pointer-events: none; display: none; width: 200px; height: 200px; border: 1px solid #0f0; background: rgba(0,0,0,0.5); box-shadow: 0 0 10px #0f0;"></svg>
+
+  <script>
+    // Code Rain Effect (Matrix-style)
+    const canvas = document.getElementById('codeRain');
+    const ctx = canvas.getContext('2d');
+    canvas.height = window.innerHeight;
+    canvas.width = window.innerWidth;
+    const matrix = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ123456789@#$%^&*()*&^%+-/~{[|`]}';
+    const matrixArr = matrix.split('');
+    const fontSize = 10;
+    const columns = canvas.width / fontSize;
+    const drops = [];
+    for (let x = 0; x < columns; x++) drops[x] = 1;
+
+    function draw() {
+      ctx.fillStyle = 'rgba(0, 0, 0, 0.04)';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.fillStyle = '#0f0';
+      ctx.font = fontSize + 'px monospace';
+      for (let i = 0; i < drops.length; i++) {
+        const text = matrixArr[Math.floor(Math.random() * matrixArr.length)];
+        ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+        if (drops[i] * fontSize > canvas.height && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+      }
+    }
+    setInterval(draw, 35);
+
+    // Linked-Data Graph Preview (Simple SVG nodes/links on hover)
+    const graphPreview = document.getElementById('graphPreview');
+    function showGraphPreview(element) {
+      graphPreview.style.display = 'block';
+      graphPreview.style.left = `${event.clientX + 10}px`;
+      graphPreview.style.top = `${event.clientY + 10}px`;
+      graphPreview.innerHTML = `
+        <circle cx="50" cy="50" r="20" fill="#00f" />
+        <circle cx="150" cy="150" r="20" fill="#f0f" />
+        <line x1="50" y1="50" x2="150" y2="150" stroke="#0f0" stroke-width="2" />
+      `;
+    }
+    document.addEventListener('mousemove', (e) => {
+      if (!graphPreview.contains(e.target) && !document.querySelector('pre:hover')) graphPreview.style.display = 'none';
+    });
+
+    // Rest of the script remains the same (openTab, loadDemo, parseMd, etc.)
+  </script>
+</body>
+</html>

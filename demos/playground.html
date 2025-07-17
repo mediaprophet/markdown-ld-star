@@ -87,7 +87,7 @@
       const input = document.getElementById('mdInput').value;
       const format = document.getElementById('outputFormat').value;
       try {
-        const result = MarkdownLD.parseMarkdownLD(input, { format });
+  const result = MarkdownLDStar.parseMarkdownLD(input, { format });
         const output = typeof result.output === 'object' ? JSON.stringify(result.output, null, 2) : result.output;
         document.getElementById('rdfOutput').textContent = output;
       } catch (e) {
@@ -99,7 +99,7 @@
       const input = document.getElementById('rdfInput').value;
       const format = document.getElementById('inputFormat').value;
       try {
-        const md = await MarkdownLD.fromRDFToMarkdownLD(input, format);
+  const md = await MarkdownLDStar.fromRDFToMarkdownLD(input, format);
         document.getElementById('mdOutput').textContent = md;
       } catch (e) {
         document.getElementById('mdOutput').textContent = 'Error: ' + e.message;
@@ -109,11 +109,12 @@
     async function fetchAndConvert() {
       const uri = document.getElementById('uriInput').value;
       const format = document.getElementById('uriFormat').value;
+      const corsProxy = 'https://corsproxy.io/?'; // You can swap for another public proxy if needed
       try {
-        const response = await fetch(uri);
+        const response = await fetch(corsProxy + encodeURIComponent(uri));
         if (!response.ok) throw new Error('Fetch failed');
         const content = await response.text();
-        const md = await MarkdownLD.fromRDFToMarkdownLD(content, format);
+  const md = await MarkdownLDStar.fromRDFToMarkdownLD(content, format);
         document.getElementById('uriOutput').textContent = md;
       } catch (e) {
         document.getElementById('uriOutput').textContent = 'Error: ' + e.message;

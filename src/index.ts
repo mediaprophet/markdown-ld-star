@@ -22,8 +22,8 @@ export interface ParseResult {
 }
 
 const LIBRARY_METADATA = {
-  parsedBy: 'markdownld v1.3.0',
-  libraryUrl: 'https://github.com/yourusername/markdownld'
+  parsedBy: 'markdown-ld-star v1.5.0',
+  libraryUrl: 'https://github.com/mediaprophet/markdown-ld-star'
 };
 
 export function parseMarkdownLD(content: string, options: ParseOptions = {}): ParseResult {

@@ -1,6 +1,18 @@
-# markdownld
+# markdown-ld-star
 
-... (previous content)
+A Node.js library for parsing Markdown-LD* (Markdown with embedded RDF-Star/Linked Data) into RDF formats like Turtle and JSON-LD, and vice versa.
+
+## Features
+- Parse Markdown-LD* into Turtle, JSON-LD, RDF/JSON, JSON-LD* formats.
+- Extract SHACL constraints.
+- Generate sample ontology templates.
+- Convert from RDF formats (Turtle, JSON-LD, etc.) to Markdown-LD*.
+- Compatible with Node.js 18, 20, 22+.
+
+## Installation
+```bash
+npm install markdown-ld-star
+```
 
 ## Enhanced Features
 - RDF-Star: Supports quoted triples and annotation syntax.
@@ -10,7 +22,7 @@
 ## Demos
 See `demos/` for samples: schema-org, rdf-star, shacl.
 
-Live demo: https://mediaprophet.github.io/markdownld/
+Live demo: https://mediaprophet.github.io/markdown-ld-star//
 
 ## Browser Usage
 ```html
@@ -26,19 +38,31 @@ Live demo: https://mediaprophet.github.io/markdownld/
 npm install markdownld
 ```
 
-```javascript
+## Usage
 
-import { parseMarkdownLD } from 'markdownld';
+```javascript
+import { parseMarkdownLD } from 'markdown-ld-star';
 
 const content = `
 [ex]: http://example.org/
 [Node]{typeof=ex:Type; prop="value"}
 `;
 
-const { turtle, graph, constraints } = parseMarkdownLD(content);
-console.log(turtle);
+const { output, constraints } = parseMarkdownLD(content, { format: 'turtle' });
+console.log(output);
 ```
 
+### convert RDF to Markddown-ld*
+
+```javascript
+import { fromRDFToMarkdownLD } from 'markdown-ld-star';
+
+const turtleInput = `@prefix ex: <http://example.org/> . ex:Person a ex:Type .`;
+const md = await fromRDFToMarkdownLD(turtleInput, 'turtle');
+console.log(md);
+```
+
+## Tests
 ```bash
 npm test
 ```
@@ -47,7 +71,7 @@ npm test
 - Outputs like RDF/JSON are designed for LLMs that prefer simple JSON over JSON-LD or Turtle.
 - All JSON outputs include a "metadata" field referencing this library.
 - Recommendation: Add to your Markdown-LD files:
-  <!-- This file uses Markdown-LD syntax. Parse with markdownld library: https://github.com/yourusername/markdownld -->
+  <!-- This file uses Markdown-LD syntax. Parse with markdownld library: https://github.com/mediaprophet/markdownld -->
 This directs LLM agents on processing.
 
 ## New Feature: Convert from RDF to Markdown-LD*
@@ -59,6 +83,7 @@ import { fromRDFToMarkdownLD } from 'markdownld';
 const turtleInput = `@prefix ex: <http://example.org/> . ex:Person a ex:Type .`;
 const md = await fromRDFToMarkdownLD(turtleInput, 'turtle');
 console.log(md);
+```
 
 ## Playground
 Try the interactive playground at https://yourusername.github.io/markdownld/playground.html

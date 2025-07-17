@@ -7,7 +7,7 @@ export default {
   output: [
     { file: 'dist/index.cjs', format: 'cjs', exports: 'default' },
     { file: 'dist/index.mjs', format: 'esm' },
-    { file: 'dist/index.browser.js', format: 'umd', name: 'MarkdownLD' }
+    { file: 'dist/index.browser.js', format: 'umd', name: 'MarkdownLDStar' }
   ],
   plugins: [typescript(), resolve({ browser: true }), commonjs()],
   external: ['n3', '@rdfjs/parser-n3', '@rdfjs/serializer-jsonld', 'unified', 'remark-parse', 'remark-stringify']

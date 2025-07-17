@@ -8,7 +8,7 @@
 
 << <<[Alice] ex:name "Alice">> ex:reportedBy [Charlie] >>
 
-<!-- This file uses Markdown-LD syntax. Parse with markdownld library: https://github.com/yourusername/markdownld -->
+<!-- This file uses Markdown-LD syntax. Parse with markdownld library: https://github.com/mediaprophet/markdownld -->
 
 [ex]: http://example.org/
 

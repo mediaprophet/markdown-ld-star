@@ -7,7 +7,7 @@ yarn-error.log*
 lerna-debug.log*
 .pnpm-debug.log*
 
-# Diagnostic reports (https://nodejs.org/api/report.html)
+# Diagnostic reports[](https://nodejs.org/api/report.html)
 report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
 
 # Runtime data
@@ -26,23 +26,23 @@ coverage
 # nyc test coverage
 .nyc_output
 
-# Grunt intermediate storage (https://gruntjs.com/creating-plugins#storing-task-files)
+# Grunt intermediate storage[](https://gruntjs.com/creating-plugins#storing-task-files)
 .grunt
 
-# Bower dependency directory (https://bower.io/)
+# Bower dependency directory[](https://bower.io/)
 bower_components
 
 # node-waf configuration
 .lock-wscript
 
-# Compiled binary addons (https://nodejs.org/api/addons.html)
+# Compiled binary addons[](https://nodejs.org/api/addons.html)
 build/Release
 
 # Dependency directories
 node_modules/
 jspm_packages/
 
-# Snowpack dependency directory (https://snowpack.dev/)
+# Snowpack dependency directory[](https://snowpack.dev/)
 web_modules/
 
 # TypeScript cache
@@ -79,7 +79,7 @@ web_modules/
 .env.production.local
 .env.local
 
-# parcel-bundler cache (https://parceljs.org/)
+# parcel-bundler cache[](https://parceljs.org/)
 .cache
 .parcel-cache
 
@@ -134,3 +134,30 @@ dist
 .yarn/build-state.yml
 .yarn/install-state.gz
 .pnp.*
+
+# Build output
+/dist
+
+# Temporary files
+*.tmp
+*.temp
+
+# IDE/Editor directories
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Lock files (if not committing them)
+# package-lock.json
+# yarn.lock
+
+# Coverage reports
+coverage/
+
+# Jest cache
+jest-cache/

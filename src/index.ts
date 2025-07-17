@@ -1,13 +1,16 @@
 import * as N3 from 'n3';
 import Parser from '@rdfjs/parser-n3';
 import Serializer from '@rdfjs/serializer-jsonld';
-import { Quad } from '@rdfjs/types';
 import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkStringify from 'remark-stringify';
 import jsonld from 'jsonld';
-const { DataFactory } = N3;
-const { namedNode, literal, quotedTriple, blankNode } = DataFactory;
+import rdfParse from 'rdf-parse';
+import { DataFactory } from 'rdf-data-factory';
+import { Readable } from 'stream';
+
+const factory = new DataFactory();
+const { namedNode, literal, quotedTriple, blankNode } = factory;
 
 export type OutputFormat = 'turtle' | 'jsonld' | 'rdfjson' | 'jsonldstar';
 
@@ -43,37 +46,35 @@ export function parseMarkdownLD(content: string, options: ParseOptions = {}): Pa
     return prefixes[prefix] ? `${prefixes[prefix]}${local}` : part;
   };
 
-const parseValue = (value: string): N3.Term => {
-  if (value.startsWith('<<') && value.endsWith('>>')) {
-    const match = value.match(/<<\s*\[([^\]]+)\]\s+([^\s]+)\s+\[([^\]]+)\]\s*>>/);
-    if (match) {
-      const [, s, p, o] = match;
-      return quotedTriple(
-        namedNode(resolveUri(s)),
-        namedNode(resolveUri(p)),
-        namedNode(resolveUri(o))
-      );
+  const parseValue = (value: string): N3.Term => {
+    if (value.startsWith('<<') && value.endsWith('>>')) {
+      const match = value.match(/<<\s*\[([^\]]+)\]\s+([^\s]+)\s+\[([^\]]+)\]\s*>>/);
+      if (match) {
+        const [, s, p, o] = match;
+        return quotedTriple(
+          namedNode(resolveUri(s)),
+          namedNode(resolveUri(p)),
+          namedNode(resolveUri(o))
+        );
+      }
+      throw new Error('Invalid quoted triple');
+    } else if (value.startsWith('"')) {
+      return literal(value.slice(1, -1));
+    } else {
+      return namedNode(resolveUri(value));
     }
-    throw new Error('Invalid quoted triple');
-  } else if (value.startsWith('"')) {
-    return literal(value.slice(1, -1));
-  } else if (value.startsWith('_:')) {
-    return blankNode(value.slice(2));
-  } else {
-    return namedNode(resolveUri(value));
-  }
-};
+  };
 
- for (const node of ast.children) {
+  for (const node of ast.children) {
     if (node.type === 'definition' && node.label && node.url) {
       prefixes[node.label] = node.url;
     } else if (node.type === 'heading' && node.children[0]?.type === 'text') {
-      currentSection = (node.children[0] as any).value.toLowerCase();
+      currentSection = node.children[0].value.toLowerCase();
     } else if (node.type === 'paragraph' && currentSection?.includes('shacl constraint')) {
       const sparqlNode = node.children.find((c: any) => c.type === 'code' && c.lang === 'sparql');
-      if (sparqlNode) constraints.push((sparqlNode as any).value);
+      if (sparqlNode) constraints.push(sparqlNode.value);
     } else if (node.type === 'paragraph') {
-      const text = processor.stringify({ type: 'root', children: [node] }).trim();
+      const text = processor.stringify({ type: 'paragraph', children: node.children }).trim();
       // Node syntax: [Label]{typeof=type; prop=value; ...}
       const nodeMatch = text.match(/\[([^\]]+)\](?:\{([^}]+)\})?/);
       if (nodeMatch) {
@@ -88,11 +89,10 @@ const parseValue = (value: string): N3.Term => {
             const [prefix, local] = key.includes(':') ? key.split(':') : ['ex', key];
             const predUri = resolveUri(`${prefix}:${local}`);
             const predicate = namedNode(predUri);
-            const object = parseValue(val) as Quad['object'];
             if (key === 'typeof') {
-              store.addQuad(subject, namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), object);
+              store.addQuad(subject, namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), parseValue(val));
             } else {
-              store.addQuad(subject, predicate, object);
+              store.addQuad(subject, predicate, parseValue(val));
             }
           }
         }
@@ -106,7 +106,7 @@ const parseValue = (value: string): N3.Term => {
             namedNode(resolveUri(p)),
             namedNode(resolveUri(o))
           );
-          store.addQuad(qt, namedNode(resolveUri(q)), parseValue(r) as Quad['object']);
+          store.addQuad(qt, namedNode(resolveUri(q)), parseValue(r));
         }
         // Annotation syntax: [S] p [O] {| q r ; ... |}
         const annMatch = text.match(/\[([^\]]+)\]\s+([^\s]+)\s+\[([^\]]+)\]\s*\{\|\s*([^|]+)\s*\|}/);
@@ -114,7 +114,7 @@ const parseValue = (value: string): N3.Term => {
           const [, s, p, o, anns] = annMatch;
           const sub = namedNode(resolveUri(s));
           const pred = namedNode(resolveUri(p));
-          const obj = parseValue(o) as Quad['object'];
+          const obj = namedNode(resolveUri(o));
           store.addQuad(sub, pred, obj); // Assert the triple
           const qt = quotedTriple(sub, pred, obj);
           const annProps = anns.split(';').map((a: string) => a.trim());
@@ -122,17 +122,17 @@ const parseValue = (value: string): N3.Term => {
             if (!ann) continue;
             const [key, val] = ann.split('=').map((kv: string) => kv.trim());
             const annPred = namedNode(resolveUri(key));
-            store.addQuad(qt, annPred, parseValue(val) as Quad['object']);
+            store.addQuad(qt, annPred, parseValue(val));
           }
         }
       }
     }
   }
 
-let output: string | any;
+  let output: string | any;
   if (format === 'turtle') {
     const writer = new N3.Writer({ prefixes });
-    writer.addQuads(store.getQuads(null, null, null, null));
+    store.forEach((quad: N3.Quad) => writer.addQuad(quad));
     writer.end((error: Error | null, result: string) => {
       if (error) throw error;
       output = result;
@@ -140,8 +140,22 @@ let output: string | any;
   } else if (format === 'jsonld') {
     const jsonldSerializer = new Serializer();
     const quads = store.getQuads(null, null, null, null);
-    output = jsonldSerializer.transform(quads as any);
-    output.metadata = LIBRARY_METADATA;
+    const quadStream = new Readable({
+      objectMode: true,
+      read() {
+        quads.forEach(q => this.push(q));
+        this.push(null);
+      }
+    });
+    const jsonldStream = jsonldSerializer.import(quadStream);
+    let jsonldString = '';
+    jsonldStream.on('data', (chunk) => {
+      jsonldString += chunk;
+    });
+    jsonldStream.on('end', () => {
+      output = JSON.parse(jsonldString);
+      output.metadata = LIBRARY_METADATA;
+    });
   } else if (format === 'rdfjson') {
     output = toRDFJSON(store);
     output.metadata = LIBRARY_METADATA;
@@ -155,40 +169,22 @@ let output: string | any;
 
 export async function fromRDFToMarkdownLD(input: string, inputFormat: InputFormat): Promise<string> {
   const store = new N3.Store();
-
-  if (inputFormat === 'turtle' || inputFormat === 'n3' || inputFormat === 'trig') {
-    const parser = new N3.Parser({ format: inputFormat === 'trig' ? 'TriG' : 'Turtle' });
-    const quads = parser.parse(input);
-    store.addQuads(quads);
-  } else if (inputFormat === 'jsonld') {
-    const doc = JSON.parse(input);
-    const nquads = await jsonld.toRDF(doc, {format: 'application/n-quads'}) as string;
-    const parser = new N3.Parser({format: 'N-Quads'});
-    const quads = parser.parse(nquads);
-    store.addQuads(quads);
-  } else if (inputFormat === 'rdfjson') {
-    const rdfjson = JSON.parse(input);
-    delete rdfjson.metadata;
-    for (const subj in rdfjson) {
-      const s = subj.startsWith('_:') ? blankNode(subj.slice(2)) : namedNode(subj);
-      for (const pred in rdfjson[subj]) {
-        const p = namedNode(pred);
-        for (const obj of rdfjson[subj][pred]) {
-          let o: N3.Term;
-          if (obj.type === 'uri') o = namedNode(obj.value);
-          else if (obj.type === 'bnode') o = blankNode(obj.value.slice(2));
-          else if (obj.type === 'literal') o = literal(obj.value, obj.lang || (obj.datatype ? namedNode(obj.datatype) : undefined));
-          else continue;
-          store.addQuad(s, p, o as Quad['object']);
-        }
-      }
+  const textStream = new Readable({
+    read() {
+      this.push(input);
+      this.push(null);
     }
-  } else if (inputFormat === 'jsonldstar') {
-    const doc = JSON.parse(input);
-    delete doc.metadata;
-    const quads = fromJSONLDStar(doc);
-    store.addQuads(quads);
-  }
+  });
+
+  const quads = await new Promise<N3.Quad[]>((resolve, reject) => {
+    const q: N3.Quad[] = [];
+    rdfParse.parse(textStream, { contentType: `application/${inputFormat}` })
+      .on('data', (quad) => q.push(quad))
+      .on('error', (error) => reject(error))
+      .on('end', () => resolve(q));
+  });
+
+  store.addQuads(quads);
 
   // Generate Markdown-LD
   const namespaceMap = new Map<string, string>();

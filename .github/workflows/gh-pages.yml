@@ -27,6 +27,15 @@ jobs:
         # This script uses vite.config.js to build the site into the /docs directory
         run: npm run build
 
+      - name: Debug Build Output 📋
+        run: |
+          echo "Listing docs directory after build:"
+          ls -la docs
+          if [ ! "$(ls -A docs)" ]; then
+            echo "ERROR: docs directory is empty after build!" >&2
+            exit 1
+          fi
+
       - name: Copy Ontologies 📂
         # Ensure docs directory exists, then copy the ontologies directory to the build output
         run: mkdir -p docs && cp -r ontologies docs/ontologies

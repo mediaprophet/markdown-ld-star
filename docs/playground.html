@@ -3,13 +3,14 @@
 <head>
   <meta charset="UTF-8">
   <title>Markdown-LD* Playground</title>
-  <script src="index.browser.js"></script>
+  <script src="../index.browser.js"></script>
   <link rel="stylesheet" crossorigin href="/assets/playground-DhbHAYsr.css">
 </head>
 <body>
   <h1>Markdown-LD* Playground</h1>
-  <p>Experiment with Markdown-LD*: Parse to RDF formats or convert RDF to Markdown-LD*. Inspired by Star Trek's LCARS interface.</p>
+  <p>Experiment with Markdown-LD*: Parse to RDF formats or convert RDF to Markdown-LD*.</p>
 
+  <div id="errorDisplay" style="color: #ff6666; display: none; margin-bottom: 10px;"></div>
   <div class="demo-container">
     <div class="demo-sidebar">
       <h3>Demo Files</h3>
@@ -26,29 +27,39 @@
 
       <div id="mdToRdf" class="tabcontent">
         <h2>Markdown-LD* to RDF</h2>
-        <textarea id="mdInput" placeholder="Enter Markdown-LD* here..."></textarea>
-        <select id="outputFormat">
-          <option value="turtle">Turtle</option>
-          <option value="jsonld">JSON-LD</option>
-          <option value="rdfjson">RDF/JSON</option>
-          <option value="jsonldstar">JSON-LD*</option>
-        </select>
-        <button onclick="parseMd()">Parse</button>
+        <div class="code-editor-container">
+          <div class="line-numbers" id="mdLineNumbers"></div>
+          <textarea id="mdInput" class="code-editor" placeholder="Enter Markdown-LD* here..." oninput="updateLineNumbers('mdInput','mdLineNumbers')"></textarea>
+        </div>
+        <div style="margin-top: 0.5em;">
+          <select id="outputFormat">
+            <option value="turtle">Turtle</option>
+            <option value="jsonld">JSON-LD</option>
+            <option value="rdfjson">RDF/JSON</option>
+            <option value="jsonldstar">JSON-LD*</option>
+          </select>
+          <button onclick="parseMd()">Parse</button>
+        </div>
         <pre id="rdfOutput"></pre>
       </div>
 
       <div id="rdfToMd" class="tabcontent" style="display: none;">
         <h2>RDF to Markdown-LD*</h2>
-        <textarea id="rdfInput" placeholder="Enter RDF here (Turtle, JSON-LD, etc.)..."></textarea>
-        <select id="inputFormat">
-          <option value="turtle">Turtle</option>
-          <option value="jsonld">JSON-LD</option>
-          <option value="rdfjson">RDF/JSON</option>
-          <option value="jsonldstar">JSON-LD*</option>
-          <option value="n3">N3</option>
-          <option value="trig">TriG</option>
-        </select>
-        <button onclick="convertRdf()">Convert</button>
+        <div class="code-editor-container">
+          <div class="line-numbers" id="rdfLineNumbers"></div>
+          <textarea id="rdfInput" class="code-editor" placeholder="Enter RDF here (Turtle, JSON-LD, etc.)..." oninput="updateLineNumbers('rdfInput','rdfLineNumbers')"></textarea>
+        </div>
+        <div style="margin-top: 0.5em;">
+          <select id="inputFormat">
+            <option value="turtle">Turtle</option>
+            <option value="jsonld">JSON-LD</option>
+            <option value="rdfjson">RDF/JSON</option>
+            <option value="jsonldstar">JSON-LD*</option>
+            <option value="n3">N3</option>
+            <option value="trig">TriG</option>
+          </select>
+          <button onclick="convertRdf()">Convert</button>
+        </div>
         <pre id="mdOutput"></pre>
       </div>
 
@@ -69,7 +80,61 @@
     </div>
   </div>
 
+  <style>
+    .code-editor-container {
+      display: flex;
+      background: #222233;
+      border-radius: 6px;
+      border: 1px solid #444;
+      box-shadow: 0 2px 8px #0002;
+      font-family: 'Fira Mono', 'Consolas', 'Menlo', 'Monaco', monospace;
+      margin-bottom: 0.5em;
+      min-height: 120px;
+      max-width: 100%;
+    }
+    .line-numbers {
+      background: #1a1a2a;
+      color: #8888aa;
+      padding: 8px 6px 8px 8px;
+      text-align: right;
+      user-select: none;
+      border-right: 1px solid #333355;
+      min-width: 2.5em;
+      font-size: 1em;
+      border-radius: 6px 0 0 6px;
+    }
+    .code-editor {
+      background: transparent;
+      color: #e6e6ff;
+      border: none;
+      outline: none;
+      resize: vertical;
+      width: 100%;
+      min-height: 120px;
+      font-family: inherit;
+      font-size: 1em;
+      padding: 8px;
+      border-radius: 0 6px 6px 0;
+      box-sizing: border-box;
+    }
+    .code-editor:focus {
+      background: #23234a;
+    }
+  </style>
   <script>
+    function updateLineNumbers(textareaId, lineNumbersId) {
+      const textarea = document.getElementById(textareaId);
+      const lineNumbers = document.getElementById(lineNumbersId);
+      const lines = textarea.value.split('\n').length;
+      let html = '';
+      for (let i = 1; i <= lines; i++) html += i + '<br>';
+      lineNumbers.innerHTML = html;
+    }
+    // Initialize line numbers on page load
+    window.addEventListener('DOMContentLoaded', () => {
+      updateLineNumbers('mdInput','mdLineNumbers');
+      updateLineNumbers('rdfInput','rdfLineNumbers');
+    });
     function openTab(evt, tabName) {
       const tabcontent = document.getElementsByClassName("tabcontent");
       for (let i = 0; i < tabcontent.length; i++) {
@@ -83,7 +148,20 @@
       evt.currentTarget.className += " active";
     }
 
+    function showError(message) {
+      const errorDisplay = document.getElementById('errorDisplay');
+      errorDisplay.textContent = `Error: ${message}`;
+      errorDisplay.style.display = 'block';
+    }
+
+    function clearError() {
+      const errorDisplay = document.getElementById('errorDisplay');
+      errorDisplay.textContent = '';
+      errorDisplay.style.display = 'none';
+    }
+
     async function loadDemo(file) {
+      clearError();
       try {
         const response = await fetch(`demos/${file}`);
         if (!response.ok) throw new Error('Failed to load demo');
@@ -92,11 +170,12 @@
         openTab({ currentTarget: document.querySelector('.tablinks') }, 'mdToRdf');
         parseMd();
       } catch (e) {
-        document.getElementById('rdfOutput').textContent = 'Error: ' + e.message;
+        showError(e.message);
       }
     }
 
     function parseMd() {
+      clearError();
       const input = document.getElementById('mdInput').value;
       const format = document.getElementById('outputFormat').value;
       try {
@@ -104,22 +183,24 @@
         const output = typeof result.output === 'object' ? JSON.stringify(result.output, null, 2) : result.output;
         document.getElementById('rdfOutput').textContent = output;
       } catch (e) {
-        document.getElementById('rdfOutput').textContent = 'Error: ' + e.message;
+        showError(e.message);
       }
     }
 
     async function convertRdf() {
+      clearError();
       const input = document.getElementById('rdfInput').value;
       const format = document.getElementById('inputFormat').value;
       try {
         const md = await MarkdownLDStar.fromRDFToMarkdownLD(input, format);
         document.getElementById('mdOutput').textContent = md;
       } catch (e) {
-        document.getElementById('mdOutput').textContent = 'Error: ' + e.message;
+        showError(e.message);
       }
     }
 
     async function fetchAndConvert() {
+      clearError();
       const uri = document.getElementById('uriInput').value;
       const format = document.getElementById('uriFormat').value;
       const corsProxy = 'https://corsproxy.io/?';
@@ -130,7 +211,7 @@
         const md = await MarkdownLDStar.fromRDFToMarkdownLD(content, format);
         document.getElementById('uriOutput').textContent = md;
       } catch (e) {
-        document.getElementById('uriOutput').textContent = 'Error: ' + e.message;
+        showError(e.message);
       }
     }
 

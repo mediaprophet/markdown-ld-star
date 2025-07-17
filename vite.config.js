@@ -17,9 +17,7 @@ export default defineConfig({
     viteStaticCopy({
       targets: [
         { src: '../dist/index.browser.js', dest: '.' },
-        { src: '../demos/*.md', dest: '.' },
-        { src: '../demos/*.js', dest: '.' },
-        { src: '../demos/*.css', dest: '.' }
+        { src: '../demos/*', dest: 'demos' }
       ]
     })
   ]

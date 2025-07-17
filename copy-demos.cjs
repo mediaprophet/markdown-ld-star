@@ -1,0 +1,3 @@
+const fse = require('fs-extra');
+// ...existing code from copy-demos.js...
+// If you want, I can move the full code from copy-demos.js here and remove the .js file.

@@ -25,10 +25,14 @@ jobs:
 
       - name: Build Pages using Vite 🔨
         # This script uses vite.config.js to build the site into the /docs directory
-        run: npm run build-pages
+        run: npm run build-vite
+
+      - name: Copy Ontologies 📂
+        # Manually copy the ontologies directory to the build output
+        run: cp -r ontologies docs/ontologies
 
       - name: Verify Build Output 🔍
-        run: ls -la docs
+        run: ls -la docs docs/ontologies
 
       - name: Deploy to GitHub Pages 🚀
         uses: JamesIves/github-pages-deploy-action@v4

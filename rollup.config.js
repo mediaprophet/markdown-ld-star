@@ -2,7 +2,6 @@ import resolve from '@rollup/plugin-node-resolve';
 import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
 import terser from '@rollup/plugin-terser';
-import polyfill from 'rollup-plugin-polyfill-node';
 
 const external = ['n3', '@rdfjs/parser-n3', '@rdfjs/serializer-jsonld', 'unified', 'remark-parse', 'remark-stringify'];
 
@@ -42,7 +41,6 @@ export default [
       name: 'MarkdownLDStar',
     },
     plugins: [
-      polyfill(),
       // For browser builds, resolve browser-specific fields
       resolve({ browser: true }),
       commonjs(),
@@ -58,7 +56,6 @@ export default [
       name: 'MarkdownLDStar',
     },
     plugins: [
-      polyfill(),
       resolve({ browser: true }),
       commonjs(),
       typescript({ tsconfig: './tsconfig.json' }),

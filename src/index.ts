@@ -78,10 +78,10 @@ export function parseMarkdownLD(content: string, options: ParseOptions = {}): Pa
         const uri = resolveUri(label.replace(/\s+/g, '_'));
         const subject = namedNode(uri);
         if (nodeMatch[2]) {
-          const props = nodeMatch[2].split(';').map(p => p.trim());
+          const props = nodeMatch[2].split(';').map((p: string) => p.trim());
           for (const prop of props) {
             if (!prop) continue;
-            const [key, val] = prop.split('=').map(s => s.trim());
+            const [key, val] = prop.split('=').map((s: string) => s.trim());
             const [prefix, local] = key.includes(':') ? key.split(':') : ['ex', key];
             const predUri = resolveUri(`${prefix}:${local}`);
             const predicate = namedNode(predUri);
@@ -113,10 +113,10 @@ export function parseMarkdownLD(content: string, options: ParseOptions = {}): Pa
           const obj = namedNode(resolveUri(o));
           store.addQuad(sub, pred, obj); // Assert the triple
           const qt = quotedTriple(sub, pred, obj);
-          const annProps = anns.split(';').map(a => a.trim());
+          const annProps = anns.split(';').map((a: string) => a.trim());
           for (const ann of annProps) {
             if (!ann) continue;
-            const [key, val] = ann.split('=').map(kv => kv.trim());
+            const [key, val] = ann.split('=').map((kv: string) => kv.trim());
             const annPred = namedNode(resolveUri(key));
             store.addQuad(qt, annPred, parseValue(val));
           }
@@ -128,14 +128,14 @@ export function parseMarkdownLD(content: string, options: ParseOptions = {}): Pa
   let output: string | any;
   if (format === 'turtle') {
     const writer = new N3.Writer({ prefixes });
-    store.forEach(quad => writer.addQuad(quad));
+    store.forEach((quad: N3.Quad) => writer.addQuad(quad));
     writer.end((error: Error | null, result: string) => {
       if (error) throw error;
       output = result;
     });
   } else if (format === 'jsonld') {
     const jsonldSerializer = new Serializer();
-    const quads = store.getQuads(null, null, null, null).map(quad => quad);
+    const quads = store.getQuads(null, null, null, null).map((quad: N3.Quad) => quad);
     output = jsonldSerializer.transform(quads);
     output.metadata = LIBRARY_METADATA;
   } else if (format === 'rdfjson') {
@@ -189,24 +189,24 @@ export async function fromRDFToMarkdownLD(input: string, inputFormat: InputForma
   // Generate Markdown-LD
   const namespaceMap = new Map<string, string>();
   const uris = new Set<string>();
-  store.forEach(quad => {
+  store.forEach((quad: N3.Quad) => {
     if (quad.subject.termType === 'NamedNode') uris.add(quad.subject.value);
     if (quad.predicate.termType === 'NamedNode') uris.add(quad.predicate.value);
     if (quad.object.termType === 'NamedNode') uris.add(quad.object.value);
     if (quad.graph.termType === 'NamedNode') uris.add(quad.graph.value);
     if (quad.subject.termType === 'Quad') {
-      [quad.subject.subject, quad.subject.predicate, quad.subject.object].forEach(term => {
+      [quad.subject.subject, quad.subject.predicate, quad.subject.object].forEach((term: N3.Term) => {
         if (term.termType === 'NamedNode') uris.add(term.value);
       });
     }
     if (quad.object.termType === 'Quad') {
-      [quad.object.subject, quad.object.predicate, quad.object.object].forEach(term => {
+      [quad.object.subject, quad.object.predicate, quad.object.object].forEach((term: N3.Term) => {
         if (term.termType === 'NamedNode') uris.add(term.value);
       });
     }
   });
 
-  const commonPrefixes = {
+  const commonPrefixes: Record<string, string> = {
     rdf: 'http://www.w3.org/1999/02/22-rdf-syntax-ns#',
     rdfs: 'http://www.w3.org/2000/01/rdf-schema#',
     owl: 'http://www.w3.org/2002/07/owl#',
@@ -259,7 +259,7 @@ export async function fromRDFToMarkdownLD(input: string, inputFormat: InputForma
   }
 
   // Annotations
-  const assertedQuads = store.getQuads(null, null, null, DataFactory.defaultGraph()).filter(q => q.subject.termType === 'NamedNode' && q.object.termType === 'NamedNode');
+  const assertedQuads = store.getQuads(null, null, null, DataFactory.defaultGraph()).filter((q: N3.Quad) => q.subject.termType === 'NamedNode' && q.object.termType === 'NamedNode');
   for (const q of assertedQuads) {
     const qt = quotedTriple(q.subject, q.predicate, q.object);
     const annQuads = store.getQuads(qt, null, null, null);
@@ -278,7 +278,7 @@ export async function fromRDFToMarkdownLD(input: string, inputFormat: InputForma
   }
 
   // Quoted triples as subject (not annotated)
-  const quotedSubjects = store.getQuads(null, null, null, null).filter(q => q.subject.termType === 'Quad' && store.countQuads(q.subject, null, null, null) === 0);
+  const quotedSubjects = store.getQuads(null, null, null, null).filter((q: N3.Quad) => q.subject.termType === 'Quad' && store.countQuads(q.subject, null, null, null) === 0);
   for (const q of quotedSubjects) {
     const s = getPrefixed(q.subject.subject.value);
     const p = getPrefixed(q.subject.predicate.value);
@@ -289,7 +289,7 @@ export async function fromRDFToMarkdownLD(input: string, inputFormat: InputForma
   }
 
   // Quoted triples as object
-  const quotedObjects = store.getQuads(null, null, null, null).filter(q => q.object.termType === 'Quad');
+  const quotedObjects = store.getQuads(null, null, null, null).filter((q: N3.Quad) => q.object.termType === 'Quad');
   for (const q of quotedObjects) {
     const s = getPrefixed(q.subject.value);
     const p = getPrefixed(q.predicate.value);
@@ -377,7 +377,7 @@ function fromJSONLDStar(doc: any): N3.Quad[] {
 
 function toRDFJSON(store: N3.Store): any {
   const rdfjson: any = {};
-  store.forEach(quad => {
+  store.forEach((quad: N3.Quad) => {
     let subjStr: string;
     if (quad.subject.termType === 'Quad') {
       // Reify quoted triple
@@ -418,7 +418,7 @@ function toJSONLDStar(store: N3.Store): any {
   const nodeMap = new Map<string, any>();
 
   // Build node map
-  store.forEach(quad => {
+  store.forEach((quad: N3.Quad) => {
     const subjId = quad.subject.termType === 'Quad' ? serializeQuoted(quad.subject) : quad.subject.value;
     if (!nodeMap.has(subjId)) nodeMap.set(subjId, { '@id': subjId });
     const node = nodeMap.get(subjId);
@@ -438,7 +438,7 @@ function toJSONLDStar(store: N3.Store): any {
   });
 
   // Handle annotations: Find quads where subject/object is quoted, add @annotation
-  store.forEach(quad => {
+  store.forEach((quad: N3.Quad) => {
     if (quad.subject.termType === 'Quad' || quad.object.termType === 'Quad') {
       const targetQuad = quad.subject.termType === 'Quad' ? quad.subject : quad.object;
       const embedded = {

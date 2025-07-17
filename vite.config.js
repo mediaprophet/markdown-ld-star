@@ -4,7 +4,7 @@ import { viteStaticCopy } from 'vite-plugin-static-copy';
 export default defineConfig({
   root: 'demos',
   build: {
-    outDir: 'docs',
+    outDir: '../docs',
     emptyOutDir: true,
     rollupOptions: {
       input: {

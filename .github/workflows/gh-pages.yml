@@ -23,19 +23,19 @@ jobs:
       - name: Install Dependencies 📦
         run: npm ci
 
-      # The rollup.config.js requires this polyfill for browser builds.
-      # This ensures it's available in the CI environment.
-      - name: Install Rollup Polyfill 🔧
-        run: npm install rollup-plugin-polyfill-node --save-dev
+      - name: Install Build Helpers 🔧
+        run: |
+          npm install rollup-plugin-polyfill-node --save-dev
+          npm install fs-extra --save-dev
 
       - name: Build Project 🔨
         run: npm run build
 
       - name: Verify Build Output 🔍
-        run: ls -la dist
+        run: ls -la dist dist/demos
 
       - name: Deploy to GitHub Pages 🚀
         uses: JamesIves/github-pages-deploy-action@v4
         with:
-          folder: dist # Deploy the 'dist' folder
+          folder: dist
           token: ${{ secrets.GITHUB_TOKEN }}

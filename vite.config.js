@@ -18,7 +18,8 @@ export default defineConfig({
       targets: [
         { src: '../dist/index.browser.js', dest: '.' },
         { src: '../demos/*', dest: 'demos' },
-  { src: '../ontologies/*', dest: 'ontologies' }
+        { src: 'style.css', dest: 'demos' },
+        { src: '../ontologies/*', dest: 'ontologies' }
       ]
     })
   ]

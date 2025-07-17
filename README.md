@@ -1,5 +1,11 @@
-# Markdown-LD*  
-**A TypeScript/JavaScript library for parsing and serializing Markdown-LD* (Markdown with RDF-star/quoted triples) with support for RDF-star, JSON-LD, Turtle, and more.**
+
+# Markdown-LD* & Markdown-LD-Star
+**A TypeScript/JavaScript library for parsing and serializing Markdown-LD* (Markdown with RDF-star/quoted triples) and Markdown-LD-Star, with support for RDF-star, JSON-LD, Turtle, and more.**
+
+---
+> **Specification Draft:**
+> This project is specified in the [Markdown-LD & Markdown-LD-Star Unofficial Draft Specification](demos/respec-index.html). The spec covers syntax, parser modes, quoted triples, SHACL constraints, and integration with the Semantic Weaver plugin and playground. See [demos/respec-index.html](demos/respec-index.html) for details.
+---
 
 ## Markdown Syntax Ontology
 
@@ -31,9 +37,10 @@ You can use this ontology to annotate or parse Markdown documents according to t
 
 ```javascript
 import { parseMarkdownLD } from 'markdown-ld-star';
+
 # markdown-ld-star
 
-A Node.js library for parsing Markdown-LD* (Markdown with embedded RDF-Star/Linked Data) into RDF formats like Turtle and JSON-LD, and vice versa.
+A Node.js library for parsing Markdown-LD* and Markdown-LD-Star (Markdown with embedded RDF-Star/Linked Data) into RDF formats like Turtle and JSON-LD, and vice versa.
 
 ## Features
 - Parse Markdown-LD* into Turtle, JSON-LD, RDF/JSON, JSON-LD* formats.
@@ -52,16 +59,18 @@ npm install markdown-ld-star
 - SPARQL-Star: Use in constraints for querying RDF-Star data.
 - SHACL: Extract and validate via SPARQL queries.
 
-## Demos
+
+## Demos & Playground
 See `demos/` for samples: schema-org, rdf-star, shacl.
 
-Live demo: https://mediaprophet.github.io/markdown-ld-star//
+- **Live playground:** https://mediaprophet.github.io/markdown-ld-star/demos/playground.html
+- **Specification:** [demos/respec-index.html](demos/respec-index.html)
 
 ## Browser Usage
 Try the interactive playground at https://mediaprophet.github.io/markdown-ld-star/demos/playground.html
 <script src="dist/index.browser.js"></script>
 <script>
-  const result = MarkdownLD.parseMarkdownLD(content);
+  const result = MarkdownLDStar.parseMarkdownLD(content);
 </script>
 ```
 

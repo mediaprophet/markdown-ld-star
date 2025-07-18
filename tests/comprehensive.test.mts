@@ -19,11 +19,12 @@ describe('Markdown-LD-Star Comprehensive Suite', () => {
     // Re-parse to get dataset
     const dataset = (await import('@rdfjs/dataset')).default.dataset();
     // Add a triple for testing
-    dataset.add({
-      subject: { termType: 'NamedNode', value: 'http://example.org/Bob' },
-      predicate: { termType: 'NamedNode', value: 'http://example.org/age' },
-      object: { termType: 'Literal', value: '23' }
-    });
+    const dataModelFactory = (await import('@rdfjs/data-model')).default;
+    dataset.add(dataModelFactory.quad(
+      dataModelFactory.namedNode('http://example.org/Bob'),
+      dataModelFactory.namedNode('http://example.org/age'),
+      dataModelFactory.literal('23')
+    ));
     const query = 'SELECT ?s ?p ?o WHERE { ?s ?p ?o }';
     const bindings = await sparqlQuery(query, dataset);
     expect(bindings.length).toBeGreaterThan(0);

@@ -4,7 +4,6 @@ import { dataset as createDataset } from '@rdfjs/dataset';
 const factory = rdf;
 
 function parseRdfStar(turtle: string, dataset: any) {
-  // Regex to find a simple quoted triple: <<subject predicate object>>
   const quotedTripleRegex = /<<\s*([^>]+)\s+([^>]+)\s+([^>]+)\s*>>/g;
   let match;
   while ((match = quotedTripleRegex.exec(turtle)) !== null) {
@@ -19,7 +18,6 @@ function parseRdfStar(turtle: string, dataset: any) {
 }
 
 function parseRdfStarWithAnnotations(turtle: string, dataset: any) {
-  // Regex to find an annotated triple: <<s p o>> annotation_p annotation_o ;
   const annotatedTripleRegex = /<<\s*([^>]+)\s+([^>]+)\s+([^>]+)\s*>>\s+([^ ]+)\s+([^ ;]+)\s*;/g;
   let match;
   while ((match = annotatedTripleRegex.exec(turtle)) !== null) {
@@ -37,6 +35,7 @@ function parseRdfStarWithAnnotations(turtle: string, dataset: any) {
     dataset.add(annotationQuad);
   }
 }
+
 import {
   InputFormat
 } from './index.js';
@@ -46,20 +45,17 @@ import N3 from 'n3';
 async function fromRDFToMarkdownLD(input: string, inputFormat: InputFormat): Promise<string> {
   try {
     if (inputFormat === 'turtle' || inputFormat === 'n3' || inputFormat === 'trig') {
-      // Use manual RDF-star parsing before N3.js
-  const dataset = createDataset();
-      parseRdfStar(input, dataset);
-      parseRdfStarWithAnnotations(input, dataset);
-      // Now parse standard triples with N3.js
+      const dataset = createDataset();
+    // Cast to any to allow .add method (DatasetCore type lacks .add in ambient types)
+    parseRdfStar(input, dataset as any);
+    parseRdfStarWithAnnotations(input, dataset as any);
       const parser = new N3.Parser({ format: inputFormat === 'trig' ? 'TriG' : 'Turtle' });
       const store = new N3.Store();
       const quads = parser.parse(input);
       store.addQuads(quads);
-      // Add N3.js quads to RDFJS dataset
       for (const quad of store.getQuads(null, null, null, null)) {
         (dataset as any).add(quad);
       }
-      // Basic Markdown-LD conversion: list subjects and predicates
       let md = '';
       const subjects = store.getSubjects(null, null, null);
       for (const subj of subjects) {
@@ -72,7 +68,6 @@ async function fromRDFToMarkdownLD(input: string, inputFormat: InputFormat): Pro
       }
       return md;
     } else if (inputFormat === 'jsonld') {
-      // JSON-LD serialization in browser using jsonld.js
       try {
         const jsonldModule = await import('jsonld');
         const jsonld = jsonldModule.default || jsonldModule;
@@ -80,34 +75,37 @@ async function fromRDFToMarkdownLD(input: string, inputFormat: InputFormat): Pro
         const nquads = await jsonld.toRDF(doc, { format: 'application/n-quads' });
         return nquads;
       } catch (e) {
-        return `Error: ${e}`;
+        if (e instanceof Error) {
+          return `Error: ${e.message}`;
+        }
+        return `Error: ${String(e)}`;
       }
     }
     return 'Unsupported input format in browser build.';
   } catch (e) {
-    return `Error: ${e}`;
+    if (e instanceof Error) {
+      return `Error: ${e.message}`;
+    }
+    return `Error: ${String(e)}`;
   }
 }
+
 // Browser-specific alternative for validateSHACL
 async function validateSHACL(content: string, ontologyTtl: string): Promise<any[]> {
   try {
     const shaclModule = await import('rdf-validate-shacl');
     const Validator = shaclModule.default || shaclModule;
     const N3 = await import('n3');
-    // Parse data
     const dataParser = new N3.Parser();
     const dataQuads = dataParser.parse(content);
     const dataStore = new N3.Store();
     dataStore.addQuads(dataQuads);
-    // Parse shapes
     const shapesParser = new N3.Parser();
     const shapesQuads = shapesParser.parse(ontologyTtl);
     const shapesStore = new N3.Store();
     shapesStore.addQuads(shapesQuads);
-    // Validate
     const validator = new Validator(shapesStore);
     const report = await validator.validate(dataStore);
-    // Format results
     const results = [];
     for (const result of report.results) {
       results.push({
@@ -124,7 +122,10 @@ async function validateSHACL(content: string, ontologyTtl: string): Promise<any[
     }
     return results;
   } catch (e) {
-    return [{ error: `SHACL validation failed: ${e}` }];
+    if (e instanceof Error) {
+      return [{ error: `SHACL validation failed: ${e.message}` }];
+    }
+    return [{ error: `SHACL validation failed: ${String(e)}` }];
   }
 }
 
@@ -147,7 +148,10 @@ async function serializeRDFXML(dataset: any): Promise<string> {
     });
     return rdfxml.trim();
   } catch (e) {
-    return `Error: ${e}`;
+    if (e instanceof Error) {
+      return `Error: ${e.message}`;
+    }
+    return `Error: ${String(e)}`;
   }
 }
 
@@ -157,10 +161,9 @@ declare global {
   }
 }
 
-// UMD global for browser
 if (typeof window !== 'undefined') {
   window.MarkdownLDStar = {
     fromRDFToMarkdownLD,
     validateSHACL
-    };
-  }
+  };
+}

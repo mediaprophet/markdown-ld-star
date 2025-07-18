@@ -13,7 +13,7 @@
   ],
   "scripts": {
     "build": "tsc && rollup -c && node copy-demos.cjs",
-    "test": "jest --transform babel-jest",
+    "test": "jest",
     "test:vitest": "vitest run",
     "prepublishOnly": "npm run build"
   },

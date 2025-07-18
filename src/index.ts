@@ -1,3 +1,34 @@
+/**
+ * Usage Example: SPARQL Query with Comunica
+ *
+ * import { sparqlQuery } from './src/index.js';
+ *
+ * const query = 'SELECT ?s ?p ?o WHERE { ?s ?p ?o } LIMIT 10';
+ * const results = await sparqlQuery(query, dataset);
+ * console.log(results);
+ */
+
+// SPARQL query utility using Comunica
+export async function sparqlQuery(query: string, dataset: any): Promise<any[]> {
+  const { QueryEngine } = require('@comunica/query-sparql');
+  const engine = new QueryEngine();
+  const result = await engine.queryBindings(query, { sources: [dataset] });
+  const bindings = await result.toArray();
+  return bindings.map(b => Object.fromEntries([...b.entries()].map(([k, v]) => [k, v.value])));
+}
+/**
+ * Usage Example: SHACL Validation
+ *
+ * import { validateSHACL, markdownOntologySHACL } from './src/index.js';
+ *
+ * const dataTurtle = `
+ *   @prefix ex: <http://example.org/> .
+ *   ex:Person a ex:Type ; ex:name "John" .
+ * `;
+ *
+ * const results = await validateSHACL(dataTurtle, markdownOntologySHACL);
+ * console.log(results);
+ */
 // @ts-ignore
 const rdfSerialize = require('rdf-serialize');
 // import streamifyArray from 'streamify-array'; // Only needed for Node builds
@@ -50,15 +81,15 @@ export const markdownOntologyN3 = fs.readFileSync(
 // UMD global for browser
 // Browser UMD global export removed for Node.js/Electron compatibility. See browser.ts for browser build.
 // @ts-ignore
-import * as RDFDataFactoryModule from 'rdf-data-factory';
-const DataFactory = new RDFDataFactoryModule.DataFactory();
+import dataModelFactory from '@rdfjs/data-model';
+const DataFactory = dataModelFactory;
 function isRDFTerm(term: any): term is NamedNode | BlankNode | Literal {
   return term && (term.termType === 'NamedNode' || term.termType === 'BlankNode' || term.termType === 'Literal');
 }
 function isQuad(term: any): term is Quad {
   return term && term.termType === 'Quad';
 }
-import rdfjsDatasetFactory from '@rdfjs/dataset';
+import datasetFactory from '@rdfjs/dataset';
 import * as RDF from '@rdfjs/data-model';
 // import DatasetCore from '@rdfjs/dataset'; // For future store migration
 // import { dataset } from '@rdfjs/dataset';
@@ -92,7 +123,7 @@ function quotedTriple(
   predicate: NamedNode,
   object: NamedNode | BlankNode | Literal
 ): Quad {
-  return (DataFactory as any).quad(subject, predicate, object);
+  return DataFactory.quad(subject, predicate, object);
 }
 
 const LIBRARY_METADATA = {
@@ -106,7 +137,7 @@ export async function parseMarkdownLD(content: string, options: ParseOptions = {
   const ast = processor.parse(content);
   const prefixes: { [key: string]: string } = {};
   // Always use the actual dataset object
-  const store = (rdfjsDatasetFactory as any).dataset();
+  const store = datasetFactory.dataset();
   const constraints: string[] = [];
 
   let currentSection: string | null = null;
@@ -125,25 +156,25 @@ export async function parseMarkdownLD(content: string, options: ParseOptions = {
       if (match) {
         const [, s, p, o] = match;
         // Only allow NamedNode or BlankNode for subject/predicate, NamedNode/BlankNode/Literal for object
-        const subj = (DataFactory as any).namedNode(resolveUri(s));
-        const pred = (DataFactory as any).namedNode(resolveUri(p));
+  const subj = DataFactory.namedNode(resolveUri(s));
+  const pred = DataFactory.namedNode(resolveUri(p));
         let obj: NamedNode | BlankNode | Literal;
         if (o.startsWith('_:')) {
-          obj = (DataFactory as any).blankNode(o.slice(2));
+          obj = DataFactory.blankNode(o.slice(2));
         } else if (o.startsWith('"')) {
-          obj = (DataFactory as any).literal(o.slice(1, -1));
+          obj = DataFactory.literal(o.slice(1, -1));
         } else {
-          obj = (DataFactory as any).namedNode(resolveUri(o));
+          obj = DataFactory.namedNode(resolveUri(o));
         }
         return quotedTriple(subj, pred, obj);
       }
       throw new Error('Invalid quoted triple');
     } else if (value.startsWith('"')) {
-      return (DataFactory as any).literal(value.slice(1, -1));
+  return DataFactory.literal(value.slice(1, -1));
     } else if (value.startsWith('_:')) {
-      return (DataFactory as any).blankNode(value.slice(2));
+  return DataFactory.blankNode(value.slice(2));
     } else {
-      return (DataFactory as any).namedNode(resolveUri(value));
+  return DataFactory.namedNode(resolveUri(value));
     }
   };
 
@@ -165,7 +196,7 @@ export async function parseMarkdownLD(content: string, options: ParseOptions = {
       if (nodeMatch) {
         const label = nodeMatch[1].trim();
         const uri = resolveUri(label.replace(/\s+/g, '_'));
-  const subject = (DataFactory as any).namedNode(uri);
+  const subject = DataFactory.namedNode(uri);
         if (nodeMatch[2]) {
           const props = nodeMatch[2].split(';').map((p: string) => p.trim());
           for (const prop of props) {
@@ -173,7 +204,7 @@ export async function parseMarkdownLD(content: string, options: ParseOptions = {
             const [key, val] = prop.split('=').map((s: string) => s.trim());
             const [prefix, local] = key.includes(':') ? key.split(':') : ['ex', key];
             const predUri = resolveUri(`${prefix}:${local}`);
-            const predicate = (DataFactory as any).namedNode(predUri);
+            const predicate = DataFactory.namedNode(predUri);
             if (key === 'typeof') {
               const obj = parseValue(val);
               if (isQuotedTriple(obj)) {
@@ -181,7 +212,7 @@ export async function parseMarkdownLD(content: string, options: ParseOptions = {
                 continue;
               }
               if (isRDFTerm(obj)) {
-                store.add((DataFactory as any).quad(subject, (DataFactory as any).namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), obj));
+                store.add(DataFactory.quad(subject, DataFactory.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), obj));
               }
             } else {
               const obj = parseValue(val);
@@ -190,7 +221,7 @@ export async function parseMarkdownLD(content: string, options: ParseOptions = {
                 continue;
               }
               if (isRDFTerm(obj)) {
-                store.add((DataFactory as any).quad(subject, predicate, obj));
+                store.add(DataFactory.quad(subject, predicate, obj));
               }
             }
           }
@@ -385,15 +416,14 @@ export async function parseMarkdownLD(content: string, options: ParseOptions = {
     // Node-only JSON-LD serialization removed for browser build
     output = { error: 'JSON-LD serialization not available in browser build.' };
   } else if (format === 'rdfjson') {
-    output = toRDFJSON(store);
+  // ...existing code...
+  // Move toRDFJSON definition above this usage
     output.metadata = LIBRARY_METADATA;
   } else if (format === 'jsonldstar') {
+
     output = toJSONLDStar(store);
     output.metadata = LIBRARY_METADATA;
-  }
 
-  return { output, constraints };
-  }
   return { output, constraints };
 }
 
@@ -413,7 +443,6 @@ function getBestLabel(store: any, subj: Term): string | undefined {
   const labels = Array.from(store.match(subj, (DataFactory as any).namedNode(pred), null)).map(q => (q as Quad).object);
   if (labels.length > 0 && labels[0].termType === 'Literal') return (labels[0] as Literal).value;
   }
-  return undefined;
 }
 function getBestDescription(store: any, subj: Term): string | undefined {
   const descPredicates = [
@@ -447,7 +476,7 @@ function getBestURL(store: any, subj: Term): string | undefined {
 }
 
 export async function fromRDFToMarkdownLD(input: string, inputFormat: InputFormat): Promise<string> {
-  const store = (rdfjsDatasetFactory as any).dataset();
+  const store = datasetFactory();
 
   if (inputFormat === 'turtle' || inputFormat === 'n3' || inputFormat === 'trig') {
     // Use N3.Parser for parsing, but add to RDFJS dataset
@@ -716,7 +745,7 @@ function toRDFJSON(store: RDF.DatasetCore): any {
   // Ensure store is the actual dataset implementation
   // If not, convert to dataset
   // Use the actual dataset implementation for .add/.match
-  const ds = typeof ((store as any).add) === 'function' ? store : (rdfjsDatasetFactory as any).dataset();
+  const ds = typeof ((store as any).add) === 'function' ? store : datasetFactory();
     if (ds !== store) {
       for (const quad of store) (ds as any).add(quad);
     }
@@ -825,7 +854,38 @@ export async function markdownLDToTurtle(content: string): Promise<string> {
 
 // Dummy validateSHACL for now (Parser/query not implemented)
 export async function validateSHACL(content: string, ontologyTtl: string): Promise<any[]> {
-  return [{ error: 'SHACL validation not implemented in this build.' }];
+  // Node-only SHACL validation using rdf-validate-shacl
+  const { Validator } = require('rdf-validate-shacl');
+  const N3 = await import('n3');
+  // Parse data
+  const dataParser = new N3.Parser();
+  const dataQuads = dataParser.parse(content);
+  const dataStore = datasetFactory();
+  for (const q of dataQuads) dataStore.add(q);
+  // Parse shapes
+  const shapesParser = new N3.Parser();
+  const shapesQuads = shapesParser.parse(ontologyTtl);
+  const shapesStore = datasetFactory();
+  for (const q of shapesQuads) shapesStore.add(q);
+  // Validate
+  const validator = new Validator(dataStore, { shapes: shapesStore });
+  const report = validator.validate();
+  // Format results
+  const results = [];
+  for (const result of report.results) {
+    results.push({
+      focusNode: result.focusNode.value,
+      message: result.message.map((m: any) => m.value),
+      path: result.path ? result.path.value : undefined,
+      severity: result.severity.value,
+      sourceConstraintComponent: result.sourceConstraintComponent.value,
+      sourceShape: result.sourceShape.value
+    });
+  }
+  if (results.length === 0) {
+    results.push({ success: true, message: 'SHACL validation passed.' });
+  }
+  return results;
 }
 
 export function generateSampleOntology(): string {

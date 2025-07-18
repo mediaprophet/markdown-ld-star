@@ -29,6 +29,13 @@ describe('MarkdownLD Parser', () => {
 });
 
 describe('MarkdownLD Parser Comprehensive', () => {
+  it('validates data against SHACL shapes', async () => {
+    const data = `@prefix ex: <http://example.org/> .\nex:Person a ex:Type ; ex:name "John" .`;
+    const { markdownOntologySHACL } = await import('../src/index.js');
+    const results = await validateSHACL(data, markdownOntologySHACL);
+    expect(Array.isArray(results)).toBe(true);
+    expect(results[0]).toHaveProperty('success');
+  });
   it('parses Markdown-LD with multiple prefixes', async () => {
     const md = '[ex]: http://example.org/\n[foaf]: http://xmlns.com/foaf/0.1/\n[Person]{typeof=foaf:Person; foaf:name="Jane"}';
     const result = await markdownLDToTurtle(md);
@@ -42,7 +49,22 @@ describe('MarkdownLD Parser Comprehensive', () => {
   });
 });
 
-describe('RDF to MarkdownLD Converter', () => {
+describe('RDF-Star Edge Cases', () => {
+  it('parses complex quoted and annotation triples from RDF-star sample', async () => {
+    const rdfStarSample = `
+      [Bob]{typeof=ex:Person; ex:age=23}
+      [Bob] ex:age 23 {| ex:measuredOn="2023-01-01"^^xsd:date ; ex:confidence=0.8 |}
+      <<[Alice] ex:name "Alice">> ex:statedBy [Bob]
+      << <<[Alice] ex:name "Alice">> ex:reportedBy [Charlie] >>
+      [ex]: http://example.org/
+    `;
+    const result = await markdownLDToTurtle(rdfStarSample);
+    expect(result).toContain('<<');
+    expect(result).toContain('ex:measuredOn');
+    expect(result).toContain('ex:confidence');
+    expect(result).toContain('ex:statedBy');
+    expect(result).toContain('ex:reportedBy');
+  });
   it('converts Turtle to Markdown-LD', async () => {
     const turtle = `
 @prefix ex: <http://example.org/> .

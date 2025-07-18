@@ -1,15 +1,15 @@
 [
   {
-    "problem": "RDF/XML serialization is not available in browser builds.",
-    "status": "unsolved"
+    "problem": "RDF/XML serialization is now available in browser builds.",
+    "status": "solved"
   },
   {
-    "problem": "JSON-LD serialization is not available in browser builds.",
-    "status": "unsolved"
+    "problem": "JSON-LD serialization is now available in browser builds.",
+    "status": "solved"
   },
   {
-    "problem": "SHACL validation is not implemented in this build.",
-    "status": "unsolved"
+    "problem": "SHACL validation is implemented in both Node and browser builds (rdf-validate-shacl).",
+    "status": "solved"
   },
   {
     "problem": "Rollup build has minor circular dependency warnings (not critical for browser builds).",

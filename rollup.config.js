@@ -3,7 +3,7 @@ import commonjs from '@rollup/plugin-commonjs';
 import typescript from '@rollup/plugin-typescript';
 import terser from '@rollup/plugin-terser';
 
-const external = ['n3', '@rdfjs/parser-n3', '@rdfjs/serializer-jsonld', 'unified', 'remark-parse', 'remark-stringify'];
+const external = ['n3', '@rdfjs/parser-n3', '@rdfjs/serializer-jsonld', 'unified', 'remark-parse', 'remark-stringify']; // Node only
 
 export default [
   // Node (CJS/ESM) builds with externals
@@ -47,13 +47,13 @@ export default [
       }
     },
     plugins: [
-      // For browser builds, resolve browser-specific fields
       resolve({ browser: true, preferBuiltins: false }),
       commonjs(),
       typescript({ tsconfig: './tsconfig.json' }),
-      // Add polyfill-node for browser shims
       require('rollup-plugin-polyfill-node')()
     ],
+    // Do NOT mark rdf-serialize or jsonld as external for browser build
+    external: ['n3', '@rdfjs/parser-n3', '@rdfjs/serializer-jsonld', 'unified', 'remark-parse', 'remark-stringify'] // exclude rdf-serialize, jsonld
   },
   // Browser UMD build, minified
   {

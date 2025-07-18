@@ -62,8 +62,8 @@
       const field = document.getElementById('fieldInput').value.trim();
       const inputFormat = document.getElementById('inputFormat').value;
       const outputFormat = document.getElementById('outputFormat').value;
-      if (!uri || !field) {
-        showError('Please provide both a URI and a field.');
+      if (!uri) {
+        showError('Please provide a URI.');
         return;
       }
       clearError();
@@ -78,34 +78,40 @@
       const inputFormat = params.get('inputFormat');
       let outputFormat = (params.get('outputFormat') || 'markdownld').toLowerCase();
       if (outputFormat === 'markdown-ld-star') outputFormat = 'markdownld';
-      if (uri && field) {
+      if (uri) {
         try {
           const corsProxy = 'https://corsproxy.io/?';
           const response = await fetch(corsProxy + encodeURIComponent(uri));
           if (!response.ok) throw new Error('Fetch failed');
           const content = await response.text();
-          const jsonld = await MarkdownLDStar.fromRDFToMarkdownLD(content, inputFormat);
-          const data = typeof jsonld === 'string' ? JSON.parse(jsonld) : jsonld;
-          let value = null;
-          if (data && data['@graph']) {
-            for (const node of data['@graph']) {
-              if (node[field]) {
-                value = node[field];
-                break;
+          if (field) {
+            const jsonld = await MarkdownLDStar.fromRDFToMarkdownLD(content, inputFormat);
+            const data = typeof jsonld === 'string' ? JSON.parse(jsonld) : jsonld;
+            let value = null;
+            if (data && data['@graph']) {
+              for (const node of data['@graph']) {
+                if (node[field]) {
+                  value = node[field];
+                  break;
+                }
               }
             }
-          }
-          let output = '';
-          if (outputFormat === 'json') {
-            output = JSON.stringify({ [field]: value }, null, 2);
-          } else if (outputFormat === 'turtle') {
-            output = `<#this> ${field} \"${value}\" .`;
-          } else if (outputFormat === 'markdownld') {
-            output = `[<#this>]{${field}=\"${value}\"}`;
+            let output = '';
+            if (outputFormat === 'json') {
+              output = JSON.stringify({ [field]: value }, null, 2);
+            } else if (outputFormat === 'turtle') {
+              output = `<#this> ${field} \"${value}\" .`;
+            } else if (outputFormat === 'markdownld') {
+              output = `[<#this>]{${field}=\"${value}\"}`;
+            } else {
+              output = `[<#this>]{${field}=\"${value}\"}`;
+            }
+            document.getElementById('apiOutput').textContent = output;
           } else {
-            output = `[<#this>]{${field}=\"${value}\"}`;
+            // Render the whole file as Markdown-LD*
+            const md = await MarkdownLDStar.fromRDFToMarkdownLD(content, inputFormat);
+            document.getElementById('apiOutput').textContent = md;
           }
-          document.getElementById('apiOutput').textContent = output;
         } catch (e) {
           showError(e.message);
         }

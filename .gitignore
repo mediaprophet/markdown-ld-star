@@ -161,3 +161,7 @@ coverage/
 
 # Jest cache
 jest-cache/
+
+# Build Files
+dist/
+docs/

@@ -10,6 +10,7 @@
 </head>
 <body>
   <canvas id="codeRain"></canvas>
+  <button id="back-to-index" onclick="window.location.href='index.html'" style="position:fixed;top:18px;left:18px;z-index:1000;background:#222;color:#fff;border:2px solid #0f0;border-radius:8px;padding:8px 16px;box-shadow:0 0 10px #0f0;cursor:pointer;">Back to Index</button>
   <div id="pixarClouds" class="pixar-cloud" style="display:none;">
     <div class="cloud" style="top:40px; left:0; animation-delay:0s;"></div>
     <div class="cloud" style="top:80px; left:200px; animation-delay:10s;"></div>
@@ -40,9 +41,9 @@
   <div class="demo-container">
     <div class="demo-sidebar">
       <h3>Demo Files</h3>
-  <button onclick="loadDemo('demos/schema-org-sample.md')">Schema.org</button>
-  <button onclick="loadDemo('demos/rdf-star-sample.md')">RDF-Star</button>
-  <button onclick="loadDemo('demos/shacl-sample.md')">SHACL</button>
+  <button onclick="loadDemo('/demos/schema-org-sample.md')">Schema.org</button>
+  <button onclick="loadDemo('/demos/rdf-star-sample.md')">RDF-Star</button>
+  <button onclick="loadDemo('/demos/shacl-sample.md')">SHACL</button>
     </div>
   <div style="flex: 1; min-width: 0;">
   <svg id="graphPreview" style="position: absolute; pointer-events: none; display: none; width: 200px; height: 200px; border: 1px solid #0f0; background: rgba(0,0,0,0.5); box-shadow: 0 0 10px #0f0;"></svg>
@@ -159,16 +160,17 @@
   </style>
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script>
-    // Theme toggle logic (Pixar, NeXT, Commodore, Cyberpunk)
+    // Theme toggle logic (Pixar, NeXT, Commodore, Cyberpunk, Plain)
     document.addEventListener('DOMContentLoaded', () => {
       const themeToggle = document.getElementById('theme-toggle');
       const themeLink = document.getElementById('theme-link');
       const pixarClouds = document.getElementById('pixarClouds');
       const themes = [
-        { name: 'Cyberpunk Mode', file: '', button: 'Pixar Mode' },
-        { name: 'Pixar Mode', file: 'pixar-theme.css', button: 'NeXT Mode' },
-        { name: 'NeXT Mode', file: 'next-theme.css', button: 'Commodore Mode' },
-        { name: 'Commodore Mode', file: 'commodore-theme.css', button: 'Cyberpunk Mode' }
+        { name: 'Cyberpunk Mode', file: '', button: 'Pixar Mode', bodyClass: '' },
+        { name: 'Pixar Mode', file: 'pixar-theme.css', button: 'NeXT Mode', bodyClass: '' },
+        { name: 'NeXT Mode', file: 'next-theme.css', button: 'Commodore Mode', bodyClass: 'next-theme' },
+        { name: 'Commodore Mode', file: 'commodore-theme.css', button: 'Plain Mode', bodyClass: 'commodore-theme' },
+        { name: 'Plain Mode', file: 'plain-theme.css', button: 'Cyberpunk Mode', bodyClass: 'plain-theme' }
       ];
       let themeIndex = 0;
       themeToggle.textContent = themes[themeIndex].button;
@@ -187,9 +189,12 @@
         } else {
           pixarClouds.style.display = 'none';
         }
+        // Presentation changes for each theme
+        document.body.className = themes[themeIndex].bodyClass;
       });
       // Initial cloud state
       pixarClouds.style.display = 'none';
+      document.body.className = themes[themeIndex].bodyClass;
     });
     function updateLineNumbers(textareaId, lineNumbersId) {
       const textarea = document.getElementById(textareaId);
@@ -343,6 +348,18 @@
     document.getElementById('mdToRdf').style.display = 'block';
 
     // API-like query via URL parameters: ?uri=...&field=...&inputFormat=...&outputFormat=...
+    function updateQueryString(params) {
+      const url = new URL(window.location);
+      for (const [key, value] of Object.entries(params)) {
+        if (value !== null && value !== undefined && value !== '') {
+          url.searchParams.set(key, value);
+        } else {
+          url.searchParams.delete(key);
+        }
+      }
+      window.history.replaceState({}, '', url);
+    }
+
     (async function apiQueryFromUrl() {
       const params = new URLSearchParams(window.location.search);
       const uri = params.get('uri');
@@ -350,7 +367,9 @@
       const inputFormat = params.get('inputFormat');
       let outputFormat = (params.get('outputFormat') || 'markdownld').toLowerCase();
       if (outputFormat === 'markdown-ld-star') outputFormat = 'markdownld';
-      if (uri && field) {
+      if (uri) {
+        // Update the browser URI to reflect the query
+        updateQueryString({ uri, field, inputFormat, outputFormat });
         if (!inputFormat) {
           showError('Missing required inputFormat parameter (e.g., inputFormat=turtle, jsonld, etc.)');
           return;
@@ -360,29 +379,37 @@
           const response = await fetch(corsProxy + encodeURIComponent(uri));
           if (!response.ok) throw new Error('Fetch failed');
           const content = await response.text();
-          // Always convert to JSON-LD for field extraction
-          const jsonld = await MarkdownLDStar.fromRDFToMarkdownLD(content, inputFormat);
-          const data = typeof jsonld === 'string' ? JSON.parse(jsonld) : jsonld;
-          let value = null;
-          if (data && data['@graph']) {
-            for (const node of data['@graph']) {
-              if (node[field]) {
-                value = node[field];
-                break;
+          if (field) {
+            // ...existing code for field extraction and rendering...
+            const jsonld = await MarkdownLDStar.fromRDFToMarkdownLD(content, inputFormat);
+            const data = typeof jsonld === 'string' ? JSON.parse(jsonld) : jsonld;
+            let value = null;
+            if (data && data['@graph']) {
+              for (const node of data['@graph']) {
+                if (node[field]) {
+                  value = node[field];
+                  break;
+                }
               }
             }
-          }
-          let output = '';
-          if (outputFormat === 'json') {
-            output = JSON.stringify({ [field]: value }, null, 2);
-          } else if (outputFormat === 'turtle') {
-            output = `<#this> ${field} \"${value}\" .`;
-          } else if (outputFormat === 'markdownld') {
-            output = `[<#this>]{${field}=\"${value}\"}`;
+            let output = '';
+            if (outputFormat === 'json') {
+              output = JSON.stringify({ [field]: value }, null, 2);
+            } else if (outputFormat === 'turtle') {
+              output = `<#this> ${field} \"${value}\" .`;
+            } else if (outputFormat === 'markdownld') {
+              output = `[<#this>]{${field}=\"${value}\"}`;
+            } else {
+              output = `[<#this>]{${field}=\"${value}\"}`;
+            }
+            document.getElementById('uriOutput').textContent = output;
           } else {
-            output = `[<#this>]{${field}=\"${value}\"}`;
+            // Render the whole file as Markdown-LD*
+            const md = await MarkdownLDStar.fromRDFToMarkdownLD(content, inputFormat);
+            document.getElementById('uriOutput').textContent = md;
+            document.getElementById('uriOutputRendered').style.display = 'block';
+            document.getElementById('uriOutputRendered').innerHTML = marked.parse(md);
           }
-          document.getElementById('uriOutput').textContent = output;
           openTab({ currentTarget: document.querySelectorAll('.tablinks')[2] }, 'fetchUri');
         } catch (e) {
           showError(e.message);

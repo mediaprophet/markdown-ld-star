@@ -165,24 +165,8 @@ const parseValue = (value: string): N3.NamedNode | N3.BlankNode | N3.Literal | N
       output = result;
     });
   } else if (format === 'jsonld') {
-    const jsonldSerializer = new Serializer();
-    const quads = store.getQuads(null, null, null, null);
-    const quadStream = new Readable({
-      objectMode: true,
-      read() {
-  quads.forEach((q: N3.Quad) => this.push(q));
-        this.push(null);
-      }
-    });
-    const jsonldStream = jsonldSerializer.import(quadStream);
-    let jsonldString = '';
-    jsonldStream.on('data', (chunk: any) => {
-      jsonldString += chunk.toString();
-    });
-    jsonldStream.on('end', () => {
-      output = JSON.parse(jsonldString);
-      output.metadata = LIBRARY_METADATA;
-    });
+    // Node-only JSON-LD serialization removed for browser build
+    output = { error: 'JSON-LD serialization not available in browser build.' };
   } else if (format === 'rdfjson') {
     output = toRDFJSON(store);
     output.metadata = LIBRARY_METADATA;

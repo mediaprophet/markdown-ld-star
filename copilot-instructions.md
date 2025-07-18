@@ -1,4 +1,3 @@
-
 # Copilot Instructions Status
 
 **Date:** July 18, 2025
@@ -15,6 +14,12 @@
 1. Patch converter logic for RDF-star mapping (spec-compliant).
 2. Recursively fix all related test failures.
 3. After all fixes are applied, address Turtle output logic.
+
+## Error Handling Improvements
+- Refactor all parsing, conversion, and serialization logic to provide comprehensive, context-rich error messages.
+  - Include details about the input, location, and possible causes.
+  - Ensure all thrown errors and rejected promises use descriptive messages.
+  - Add test cases to verify error handling and messaging.
 
 ---
 

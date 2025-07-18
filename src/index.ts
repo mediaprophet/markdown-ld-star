@@ -1,3 +1,4 @@
+import type { Term, Quad } from '@rdfjs/types';
 /**
  * Usage Example: SPARQL Query with Comunica
  *
@@ -15,7 +16,6 @@ export async function sparqlQuery(query: string, dataset: any): Promise<any[]> {
   const result = await engine.queryBindings(query, { sources: [dataset] });
   const bindings = await result.toArray();
   return bindings.map(b => Object.fromEntries([...b.entries()].map(([k, v]) => [k, v.value])));
-}
 /**
  * Usage Example: SHACL Validation
  *
@@ -80,9 +80,7 @@ export const markdownOntologyN3 = fs.readFileSync(
 );
 // UMD global for browser
 // Browser UMD global export removed for Node.js/Electron compatibility. See browser.ts for browser build.
-// @ts-ignore
-import dataModelFactory from '@rdfjs/data-model';
-const DataFactory = dataModelFactory;
+import rdf from 'rdf-ext';
 function isRDFTerm(term: any): term is NamedNode | BlankNode | Literal {
   return term && (term.termType === 'NamedNode' || term.termType === 'BlankNode' || term.termType === 'Literal');
 }
@@ -90,7 +88,6 @@ function isQuad(term: any): term is Quad {
   return term && term.termType === 'Quad';
 }
 import datasetFactory from '@rdfjs/dataset';
-import * as RDF from '@rdfjs/data-model';
 // import DatasetCore from '@rdfjs/dataset'; // For future store migration
 // import { dataset } from '@rdfjs/dataset';
 import { unified } from 'unified';
@@ -123,7 +120,7 @@ function quotedTriple(
   predicate: NamedNode,
   object: NamedNode | BlankNode | Literal
 ): Quad {
-  return DataFactory.quad(subject, predicate, object);
+  return rdf.quad(subject, predicate, object);
 }
 
 const LIBRARY_METADATA = {
@@ -137,7 +134,7 @@ export async function parseMarkdownLD(content: string, options: ParseOptions = {
   const ast = processor.parse(content);
   const prefixes: { [key: string]: string } = {};
   // Always use the actual dataset object
-  const store = datasetFactory.dataset();
+  const store = datasetFactory();
   const constraints: string[] = [];
 
   let currentSection: string | null = null;
@@ -156,25 +153,25 @@ export async function parseMarkdownLD(content: string, options: ParseOptions = {
       if (match) {
         const [, s, p, o] = match;
         // Only allow NamedNode or BlankNode for subject/predicate, NamedNode/BlankNode/Literal for object
-  const subj = DataFactory.namedNode(resolveUri(s));
-  const pred = DataFactory.namedNode(resolveUri(p));
+  const subj = rdf.namedNode(resolveUri(s));
+  const pred = rdf.namedNode(resolveUri(p));
         let obj: NamedNode | BlankNode | Literal;
         if (o.startsWith('_:')) {
-          obj = DataFactory.blankNode(o.slice(2));
+          obj = rdf.blankNode(o.slice(2));
         } else if (o.startsWith('"')) {
-          obj = DataFactory.literal(o.slice(1, -1));
+          obj = rdf.literal(o.slice(1, -1));
         } else {
-          obj = DataFactory.namedNode(resolveUri(o));
+          obj = rdf.namedNode(resolveUri(o));
         }
         return quotedTriple(subj, pred, obj);
       }
       throw new Error('Invalid quoted triple');
     } else if (value.startsWith('"')) {
-  return DataFactory.literal(value.slice(1, -1));
+  return rdf.literal(value.slice(1, -1));
     } else if (value.startsWith('_:')) {
-  return DataFactory.blankNode(value.slice(2));
+  return rdf.blankNode(value.slice(2));
     } else {
-  return DataFactory.namedNode(resolveUri(value));
+  return rdf.namedNode(resolveUri(value));
     }
   };
 
@@ -196,7 +193,7 @@ export async function parseMarkdownLD(content: string, options: ParseOptions = {
       if (nodeMatch) {
         const label = nodeMatch[1].trim();
         const uri = resolveUri(label.replace(/\s+/g, '_'));
-  const subject = DataFactory.namedNode(uri);
+  const subject = rdf.namedNode(uri);
         if (nodeMatch[2]) {
           const props = nodeMatch[2].split(';').map((p: string) => p.trim());
           for (const prop of props) {
@@ -204,7 +201,7 @@ export async function parseMarkdownLD(content: string, options: ParseOptions = {
             const [key, val] = prop.split('=').map((s: string) => s.trim());
             const [prefix, local] = key.includes(':') ? key.split(':') : ['ex', key];
             const predUri = resolveUri(`${prefix}:${local}`);
-            const predicate = DataFactory.namedNode(predUri);
+            const predicate = rdf.namedNode(predUri);
             if (key === 'typeof') {
               const obj = parseValue(val);
               if (isQuotedTriple(obj)) {
@@ -212,7 +209,7 @@ export async function parseMarkdownLD(content: string, options: ParseOptions = {
                 continue;
               }
               if (isRDFTerm(obj)) {
-                store.add(DataFactory.quad(subject, DataFactory.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), obj));
+                store.add(rdf.quad(subject, rdf.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), obj));
               }
             } else {
               const obj = parseValue(val);
@@ -221,7 +218,7 @@ export async function parseMarkdownLD(content: string, options: ParseOptions = {
                 continue;
               }
               if (isRDFTerm(obj)) {
-                store.add(DataFactory.quad(subject, predicate, obj));
+                store.add(rdf.quad(subject, predicate, obj));
               }
             }
           }
@@ -230,18 +227,18 @@ export async function parseMarkdownLD(content: string, options: ParseOptions = {
         const annotationMatch = text.match(/\[([^\]]+)\]\s+([^\s]+)\s+\[([^\]]+)\]\s*\{\|([^|]+)\|\}/);
         if (annotationMatch) {
           const [, s, p, o, annBlock] = annotationMatch;
-          const subj = (DataFactory as any).namedNode(resolveUri(s));
-          const pred = (DataFactory as any).namedNode(resolveUri(p));
-          const obj = (DataFactory as any).namedNode(resolveUri(o));
+          const subj = rdf.namedNode(resolveUri(s));
+          const pred = rdf.namedNode(resolveUri(p));
+          const obj = rdf.namedNode(resolveUri(o));
           const qt = quotedTriple(subj, pred, obj);
-          store.add((DataFactory as any).quad(subj, pred, obj));
+          store.add(rdf.quad(subj, pred, obj));
           // Parse annotation properties
           const annProps = annBlock.split(';').map((a: string) => a.trim()).filter(Boolean);
           for (const ann of annProps) {
             const [annKey, annVal] = ann.split('=').map((kv: string) => kv.trim());
-            const annPred = (DataFactory as any).namedNode(resolveUri(annKey));
+            const annPred = rdf.namedNode(resolveUri(annKey));
             const annObj = parseValue(annVal);
-            store.add((DataFactory as any).quad(qt, annPred, annObj));
+            store.add(rdf.quad(qt, annPred, annObj));
           }
         }
         continue;
@@ -251,34 +248,34 @@ export async function parseMarkdownLD(content: string, options: ParseOptions = {
       if (qtMatch) {
         const [, s, p, o, q, r] = qtMatch;
         const qt = quotedTriple(
-          (DataFactory as any).namedNode(resolveUri(s)),
-          (DataFactory as any).namedNode(resolveUri(p)),
-          (DataFactory as any).namedNode(resolveUri(o))
+          rdf.namedNode(resolveUri(s)),
+          rdf.namedNode(resolveUri(p)),
+          rdf.namedNode(resolveUri(o))
         );
   // Add as RDF-star triple (subject is quoted triple)
   const pv = parseValue(r);
   // Always add annotation triple for quoted triple as subject
-  store.add((DataFactory as any).quad(qt, (DataFactory as any).namedNode(resolveUri(q)), pv));
+  store.add(rdf.quad(qt, rdf.namedNode(resolveUri(q)), pv));
         continue;
       }
       // Annotation syntax: [S] p [O] {| q r ; ... |}
       const annMatch = text.match(/\[([^\]]+)\]\s+([^\s]+)\s+\[([^\]]+)\]\s*\{\|\s*([^|]+)\s*\|}/);
       if (annMatch) {
         const [, s, p, o, anns] = annMatch;
-  const sub = (DataFactory as any).namedNode(resolveUri(s));
-  const pred = (DataFactory as any).namedNode(resolveUri(p));
-  const obj = (DataFactory as any).namedNode(resolveUri(o));
-  store.add((DataFactory as any).quad(sub, pred, obj)); // Assert the triple
+  const sub = rdf.namedNode(resolveUri(s));
+  const pred = rdf.namedNode(resolveUri(p));
+  const obj = rdf.namedNode(resolveUri(o));
+  store.add(rdf.quad(sub, pred, obj)); // Assert the triple
         const qt = quotedTriple(sub, pred, obj);
         const annProps = anns.split(';').map((a: string) => a.trim());
         for (const ann of annProps) {
           if (!ann) continue;
           const [key, val] = ann.split('=').map((kv: string) => kv.trim());
-          const annPred = (DataFactory as any).namedNode(resolveUri(key));
+          const annPred = rdf.namedNode(resolveUri(key));
           // Add as RDF-star annotation (subject is quoted triple)
           const pv = parseValue(val);
           // Always add annotation triple for quoted triple as subject
-          store.add((DataFactory as any).quad(qt, annPred, pv));
+          store.add(rdf.quad(qt, annPred, pv));
         }
         continue;
       }
@@ -286,13 +283,13 @@ export async function parseMarkdownLD(content: string, options: ParseOptions = {
       const qtObjMatch = text.match(/\[([^\]]+)\]\s+([^\s]+)\s+<<\s*\[([^\]]+)\]\s+([^\s]+)\s+\[([^\]]+)\]\s*>>/);
       if (qtObjMatch) {
         const [, s, p, qs, qp, qo] = qtObjMatch;
-  const subj = (DataFactory as any).namedNode(resolveUri(s));
-  const pred = (DataFactory as any).namedNode(resolveUri(p));
-  const qt = quotedTriple((DataFactory as any).namedNode(resolveUri(qs)), (DataFactory as any).namedNode(resolveUri(qp)), (DataFactory as any).namedNode(resolveUri(qo)));
+  const subj = rdf.namedNode(resolveUri(s));
+  const pred = rdf.namedNode(resolveUri(p));
+  const qt = quotedTriple(rdf.namedNode(resolveUri(qs)), rdf.namedNode(resolveUri(qp)), rdf.namedNode(resolveUri(qo)));
         // Add as RDF-star triple (object is quoted triple)
   if (isRDFTerm(qt)) {
           // Always add the quoted triple for RDF-star
-          store.add((DataFactory as any).quad(qt.subject, qt.predicate, qt.object));
+          store.add(rdf.quad(qt.subject, qt.predicate, qt.object));
           // No annotation block available here, skip annotation parsing
     for (const [prefix, uri] of Object.entries(prefixes)) {
       turtle += `@prefix ${prefix}: <${uri}>.\n`;
@@ -421,10 +418,12 @@ export async function parseMarkdownLD(content: string, options: ParseOptions = {
     output.metadata = LIBRARY_METADATA;
   } else if (format === 'jsonldstar') {
 
-    output = toJSONLDStar(store);
+  // ...existing code...
+  // Move toJSONLDStar definition above this usage
     output.metadata = LIBRARY_METADATA;
 
   return { output, constraints };
+}
 }
 
 
@@ -440,7 +439,7 @@ function getBestLabel(store: any, subj: Term): string | undefined {
     'http://xmlns.com/foaf/0.1/name',
   ];
   for (const pred of labelPredicates) {
-  const labels = Array.from(store.match(subj, (DataFactory as any).namedNode(pred), null)).map(q => (q as Quad).object);
+  const labels = Array.from(store.match(subj, rdf.namedNode(pred), null)).map(q => (q as Quad).object);
   if (labels.length > 0 && labels[0].termType === 'Literal') return (labels[0] as Literal).value;
   }
 }
@@ -454,7 +453,7 @@ function getBestDescription(store: any, subj: Term): string | undefined {
     'http://rdfs.org/sioc/ns#content',
   ];
   for (const pred of descPredicates) {
-  const descs = Array.from(store.match(subj, (DataFactory as any).namedNode(pred), null)).map(q => (q as Quad).object);
+  const descs = Array.from(store.match(subj, rdf.namedNode(pred), null)).map(q => (q as Quad).object);
   if (descs.length > 0 && descs[0].termType === 'Literal') return (descs[0] as Literal).value;
   }
   return undefined;
@@ -468,13 +467,12 @@ function getBestURL(store: any, subj: Term): string | undefined {
     'http://www.w3.org/2006/vcard/ns#url',
   ];
   for (const pred of urlPredicates) {
-  const urls = Array.from(store.match(subj, (DataFactory as any).namedNode(pred), null)).map(q => (q as Quad).object);
+  const urls = Array.from(store.match(subj, rdf.namedNode(pred), null)).map(q => (q as Quad).object);
   if (urls.length > 0 && urls[0].termType === 'NamedNode') return (urls[0] as NamedNode).value;
   if (urls.length > 0 && urls[0].termType === 'Literal') return (urls[0] as Literal).value;
   }
   return undefined;
 }
-
 export async function fromRDFToMarkdownLD(input: string, inputFormat: InputFormat): Promise<string> {
   const store = datasetFactory();
 
@@ -503,13 +501,13 @@ export async function fromRDFToMarkdownLD(input: string, inputFormat: InputForma
   if (quad.graph && typeof quad.graph.termType !== 'undefined' && quad.graph.termType === 'NamedNode') uris.add(quad.graph.value);
     if (isQuotedTriple(quad.subject)) {
       const subj = quad.subject as RDFStarQuad;
-      [subj.subject, subj.predicate, subj.object].forEach((term: RDF.Term) => {
+  [subj.subject, subj.predicate, subj.object].forEach((term: Term) => {
         if (term.termType === 'NamedNode') uris.add(term.value);
       });
     }
     if (isQuotedTriple(quad.object)) {
       const obj = quad.object as RDFStarQuad;
-      [obj.subject, obj.predicate, obj.object].forEach((term: RDF.Term) => {
+  [obj.subject, obj.predicate, obj.object].forEach((term: Term) => {
         if (term.termType === 'NamedNode') uris.add(term.value);
       });
     }
@@ -551,7 +549,7 @@ export async function fromRDFToMarkdownLD(input: string, inputFormat: InputForma
   const prefixForNs = new Map(Array.from(namespaceMap, a => [a[1], a[0]]));
 
   // Helper to get prefixed name
-  const getPrefixed = (term: RDF.Term | RDF.Quad): string => {
+  const getPrefixed = (term: Term | Quad): string => {
     if (isQuotedTriple(term)) {
       return `<<${getPrefixed(term.subject)} ${getPrefixed(term.predicate)} ${getPrefixed(term.object)}>>`;
     } else if ('termType' in term && term.termType === 'NamedNode') {
@@ -576,37 +574,37 @@ export async function fromRDFToMarkdownLD(input: string, inputFormat: InputForma
   md += '\n';
 
   // Typed nodes (render as Markdown-LD* blocks)
-  const typedSubjects = Array.from(store.match(null, (DataFactory as any).namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), null)).map(q => (q as RDF.Quad).subject).filter((s: RDF.Term) => s.termType === 'NamedNode');
+  const typedSubjects = Array.from(store.match(null, rdf.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), null)).map(q => (q as Quad).subject).filter((s: Term) => s.termType === 'NamedNode');
   for (const subj of typedSubjects) {
     // Use local name for label, lowercase for FOAF
     let label = getPrefixed(subj);
     if (label.includes(':')) label = label.split(':')[1];
     // Lowercase for FOAF test expectation
     if (label.toLowerCase() === 'alice' || label.toLowerCase() === 'bob') label = label.toLowerCase();
-  const types = (Array.from(store.match(subj, (DataFactory as any).namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), null)) as Quad[]).map((q: Quad) => q.object);
+  const types = (Array.from(store.match(subj, rdf.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), null)) as Quad[]).map((q: Quad) => q.object);
     const type = types.length > 0 ? `typeof=${getPrefixed(types[0])}; ` : '';
-  const props = Array.from(store.match(subj, null, null, null)).map(q => q as RDF.Quad).filter((q: RDF.Quad) => q.predicate.termType === 'NamedNode' && !isQuotedTriple(q.object));
+  const props = Array.from(store.match(subj, null, null, null)).map(q => q as Quad).filter((q: Quad) => q.predicate.termType === 'NamedNode' && !isQuotedTriple(q.object));
 
     let nodeRepresentation = `[${label}]{`;
     nodeRepresentation += type;
     // Always include foaf:name if present
-    const foafNameQuad = props.find((prop: RDF.Quad) => getPrefixed(prop.predicate) === 'foaf:name');
+  const foafNameQuad = props.find((prop: Quad) => getPrefixed(prop.predicate) === 'foaf:name');
     if (foafNameQuad && 'object' in foafNameQuad) {
-      nodeRepresentation += `foaf:name="${(foafNameQuad.object as RDF.Literal | RDF.NamedNode | RDF.BlankNode).value}"; `;
+  nodeRepresentation += `foaf:name="${(foafNameQuad.object as Literal | NamedNode | BlankNode).value}"; `;
     }
     // Order properties: foaf:name, foaf:mbox, foaf:knows, others
     const propOrder = ['foaf:name', 'foaf:mbox', 'foaf:knows'];
     propOrder.forEach(orderKey => {
-      props.filter((prop: RDF.Quad) => getPrefixed(prop.predicate) === orderKey).forEach((prop: RDF.Quad) => {
+  props.filter((prop: Quad) => getPrefixed(prop.predicate) === orderKey).forEach((prop: Quad) => {
         if (orderKey === 'foaf:name') return; // already added
-        const o = prop.object.termType === 'Literal' ? `"${(prop.object as RDF.Literal).value}"` : getPrefixed(prop.object);
+  const o = prop.object.termType === 'Literal' ? `"${(prop.object as Literal).value}"` : getPrefixed(prop.object);
         nodeRepresentation += `${orderKey}=${o}; `;
       });
     });
     // Add remaining properties
-    props.filter((prop: RDF.Quad) => !propOrder.includes(getPrefixed(prop.predicate)) && getPrefixed(prop.predicate) !== 'rdf:type').forEach((prop: RDF.Quad) => {
+  props.filter((prop: Quad) => !propOrder.includes(getPrefixed(prop.predicate)) && getPrefixed(prop.predicate) !== 'rdf:type').forEach((prop: Quad) => {
       const p = getPrefixed(prop.predicate);
-      const o = prop.object.termType === 'Literal' ? `"${(prop.object as RDF.Literal).value}"` : getPrefixed(prop.object);
+  const o = prop.object.termType === 'Literal' ? `"${(prop.object as Literal).value}"` : getPrefixed(prop.object);
       nodeRepresentation += `${p}=${o}; `;
     });
     nodeRepresentation = nodeRepresentation.trimEnd() + '}\n';
@@ -619,8 +617,8 @@ export async function fromRDFToMarkdownLD(input: string, inputFormat: InputForma
   // Annotations
   const assertedQuads = Array.from(store.match(null, null, null, undefined)).map(q => q as Quad).filter((q: Quad) => isRDFTerm(q.subject) && isRDFTerm(q.object));
   for (const q of assertedQuads) {
-    const qt = quotedTriple(q.subject as RDF.NamedNode | RDF.BlankNode, q.predicate as RDF.NamedNode, q.object as RDF.NamedNode | RDF.BlankNode | RDF.Literal);
-    const annQuads = Array.from(store.match(qt as unknown as RDF.Term, null, null, null)).map(aq => aq as RDF.Quad);
+  const qt = quotedTriple(q.subject as NamedNode | BlankNode, q.predicate as NamedNode, q.object as NamedNode | BlankNode | Literal);
+  const annQuads = Array.from(store.match(qt as unknown as Term, null, null, null)).map(aq => aq as Quad);
     if (annQuads.length > 0) {
       const s = getPrefixed(q.subject);
       const p = getPrefixed(q.predicate);
@@ -628,7 +626,7 @@ export async function fromRDFToMarkdownLD(input: string, inputFormat: InputForma
       md += `[${s}] ${p} [${o}] {| `;
       for (const ann of annQuads) {
         const ap = getPrefixed(ann.predicate);
-        const ao = ann.object.termType === 'Literal' ? `"${(ann.object as RDF.Literal).value}"` : getPrefixed(ann.object);
+  const ao = ann.object.termType === 'Literal' ? `"${(ann.object as Literal).value}"` : getPrefixed(ann.object);
         md += `${ap}=${ao}; `;
       }
       md = md.trimEnd() + ' |}\n';
@@ -636,10 +634,10 @@ export async function fromRDFToMarkdownLD(input: string, inputFormat: InputForma
   }
 
   // Quoted triples as subject (not annotated)
-  const quotedSubjects = Array.from(store.match(null, null, null, null)).map(q => q as RDF.Quad).filter((q: RDF.Quad) => isQuotedTriple(q.subject) && Array.from(store.match(q.subject, null, null, null)).length === 0);
+  const quotedSubjects = Array.from(store.match(null, null, null, null)).map(q => q as Quad).filter((q: Quad) => isQuotedTriple(q.subject) && Array.from(store.match(q.subject, null, null, null)).length === 0);
   for (const q of quotedSubjects) {
     if (isQuotedTriple(q.subject)) {
-      const subj = q.subject as RDF.Quad;
+  const subj = q.subject as Quad;
       const s = getPrefixed(subj.subject);
       const p = getPrefixed(subj.predicate);
       const o = getPrefixed(subj.object);
@@ -650,10 +648,10 @@ export async function fromRDFToMarkdownLD(input: string, inputFormat: InputForma
   }
 
   // Quoted triples as object
-  const quotedObjects = Array.from(store.match(null, null, null, null)).map(q => q as RDF.Quad).filter((q: RDF.Quad) => isQuotedTriple(q.object));
+  const quotedObjects = Array.from(store.match(null, null, null, null)).map(q => q as Quad).filter((q: Quad) => isQuotedTriple(q.object));
   for (const q of quotedObjects) {
     if (isQuotedTriple(q.object)) {
-      const obj = q.object as RDF.Quad;
+  const obj = q.object as Quad;
       const s = getPrefixed(q.subject);
       const p = getPrefixed(q.predicate);
       const os = getPrefixed(obj.subject);
@@ -664,7 +662,7 @@ export async function fromRDFToMarkdownLD(input: string, inputFormat: InputForma
   }
 
   // SHACL constraints
-  const shaclNodes = Array.from(store.match(null, (DataFactory as any).namedNode('http://www.w3.org/ns/shacl#select'), null, null));
+  const shaclNodes = Array.from(store.match(null, rdf.namedNode('http://www.w3.org/ns/shacl#select'), null, null));
   if (shaclNodes.length > 0) {
     md += '\n## SHACL Constraints\n\n';
     for (const sh of shaclNodes) {
@@ -682,36 +680,36 @@ function fromJSONLDStar(doc: any): Quad[] {
   const quads: Quad[] = [];
   const processNode = (node: any) => {
     if (!node['@id']) return;
-  const subject = (DataFactory as any).namedNode(node['@id']);
+  const subject = rdf.namedNode(node['@id']);
     for (const key in node) {
       if (key === '@id' || key === '@type' || key === '@annotation' || key === '@graph') continue;
       const values = Array.isArray(node[key]) ? node[key] : [node[key]];
       for (const value of values) {
   let object: Term;
         if (typeof value === 'object' && value['@value'] !== undefined) {
-          object = (DataFactory as any).literal(value['@value'], value['@language'] || (value['@type'] ? (DataFactory as any).namedNode(value['@type']) : undefined));
+          object = rdf.literal(value['@value'], value['@language'] || (value['@type'] ? rdf.namedNode(value['@type']) : undefined));
         } else if (typeof value === 'object' && value['@id']) {
           const keys = Object.keys(value);
           if (keys.length === 2 && keys.includes('@id') && !keys.includes('@type')) {
             const predKey = keys.find(k => k !== '@id')!;
             const objVal = value[predKey];
-            const s = (DataFactory as any).namedNode(value['@id']);
-            const p = (DataFactory as any).namedNode(predKey);
-            const o = typeof objVal === 'object' && objVal['@id'] ? (DataFactory as any).namedNode(objVal['@id']) : (DataFactory as any).literal(objVal['@value'] || objVal);
+            const s = rdf.namedNode(value['@id']);
+            const p = rdf.namedNode(predKey);
+            const o = typeof objVal === 'object' && objVal['@id'] ? rdf.namedNode(objVal['@id']) : rdf.literal(objVal['@value'] || objVal);
             object = quotedTriple(s, p, o) as unknown as Term;
           } else {
-            object = (DataFactory as any).namedNode(value['@id']);
+            object = rdf.namedNode(value['@id']);
           }
         } else {
-          object = (DataFactory as any).namedNode(value['@id'] || value);
+          object = rdf.namedNode(value['@id'] || value);
         }
         // Only push if subject, predicate, object are valid Terms (not DefaultGraph)
          if (
            (subject.termType === 'NamedNode' || subject.termType === 'BlankNode') &&
-           (DataFactory as any).namedNode(key).termType === 'NamedNode' &&
+           rdf.namedNode(key).termType === 'NamedNode' &&
            (object.termType === 'NamedNode' || object.termType === 'BlankNode' || object.termType === 'Literal')
          ) {
-           quads.push((DataFactory as any).quad(subject, (DataFactory as any).namedNode(key), object));
+           quads.push(rdf.quad(subject, rdf.namedNode(key), object));
          }
         if (typeof value === 'object' && value['@annotation']) {
           // RDFJS does not support quoted triples as subjects; skip annotation quad creation for quoted triples
@@ -721,7 +719,7 @@ function fromJSONLDStar(doc: any): Quad[] {
     if (node['@type']) {
       const types = Array.isArray(node['@type']) ? node['@type'] : [node['@type']];
       for (const t of types) {
-  quads.push((DataFactory as any).quad(subject, (DataFactory as any).namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), (DataFactory as any).namedNode(t)));
+  quads.push(rdf.quad(subject, rdf.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#type'), rdf.namedNode(t)));
       }
     }
     if (node['@graph']) {
@@ -740,7 +738,7 @@ function fromJSONLDStar(doc: any): Quad[] {
   return quads;
 }
 
-function toRDFJSON(store: RDF.DatasetCore): any {
+function toRDFJSON(store: any): any {
   const rdfjson: any = {};
   // Ensure store is the actual dataset implementation
   // If not, convert to dataset
@@ -753,13 +751,13 @@ function toRDFJSON(store: RDF.DatasetCore): any {
     let subjStr: string;
     if (isQuotedTriple(quad.subject)) {
       // Reify quoted triple
-      const bnode = (DataFactory as any).blankNode();
+  const bnode = rdf.blankNode();
       const subj = quad.subject as any;
     const subjId = isQuotedTriple(quad.subject)
       ? serializeQuoted(quad.subject)
   : (quad.subject ? (quad.subject as NamedNode | BlankNode).value : '');
-  (ds as any).add((DataFactory as any).quad(bnode, (DataFactory as any).namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate'), subj.predicate));
-  (ds as any).add((DataFactory as any).quad(bnode, (DataFactory as any).namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#object'), subj.object));
+  (ds as any).add(rdf.quad(bnode, rdf.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate'), subj.predicate));
+  (ds as any).add(rdf.quad(bnode, rdf.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#object'), subj.object));
       subjStr = '_:' + bnode.value;
       // Then treat as blank
     } else {
@@ -779,11 +777,11 @@ function toRDFJSON(store: RDF.DatasetCore): any {
       if (lit.datatype && lit.datatype.value !== 'http://www.w3.org/2001/XMLSchema#string') objEntry.datatype = lit.datatype.value;
     } else if (isQuotedTriple(quad.object)) {
       // Reify object
-      const bnode = (DataFactory as any).blankNode();
+  const bnode = rdf.blankNode();
       const obj = quad.object as any;
-  (ds as any).add((DataFactory as any).quad(bnode, (DataFactory as any).namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#subject'), obj.subject));
-  (ds as any).add((DataFactory as any).quad(bnode, (DataFactory as any).namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate'), obj.predicate));
-  (ds as any).add((DataFactory as any).quad(bnode, (DataFactory as any).namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#object'), obj.object));
+  (ds as any).add(rdf.quad(bnode, rdf.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#subject'), obj.subject));
+  (ds as any).add(rdf.quad(bnode, rdf.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#predicate'), obj.predicate));
+  (ds as any).add(rdf.quad(bnode, rdf.namedNode('http://www.w3.org/1999/02/22-rdf-syntax-ns#object'), obj.object));
       objEntry = { type: 'bnode', value: '_:' + bnode.value };
     }
     rdfjson[subjStr][predStr].push(objEntry);
@@ -791,7 +789,7 @@ function toRDFJSON(store: RDF.DatasetCore): any {
   return rdfjson;
 }
 
-function toJSONLDStar(store: RDF.DatasetCore): any {
+function toJSONLDStar(store: any): any {
   const graph: any = { '@graph': [] };
   const nodeMap = new Map<string, any>();
 
@@ -854,38 +852,24 @@ export async function markdownLDToTurtle(content: string): Promise<string> {
 
 // Dummy validateSHACL for now (Parser/query not implemented)
 export async function validateSHACL(content: string, ontologyTtl: string): Promise<any[]> {
-  // Node-only SHACL validation using rdf-validate-shacl
-  const { Validator } = require('rdf-validate-shacl');
+  // SHACL validation using shacl-engine and rdf-ext
+  const { Validator } = await import('shacl-engine');
+  const rdf = (await import('rdf-ext')).default;
   const N3 = await import('n3');
   // Parse data
   const dataParser = new N3.Parser();
   const dataQuads = dataParser.parse(content);
-  const dataStore = datasetFactory();
+  const dataStore = rdf.dataset();
   for (const q of dataQuads) dataStore.add(q);
   // Parse shapes
   const shapesParser = new N3.Parser();
   const shapesQuads = shapesParser.parse(ontologyTtl);
-  const shapesStore = datasetFactory();
+  const shapesStore = rdf.dataset();
   for (const q of shapesQuads) shapesStore.add(q);
   // Validate
-  const validator = new Validator(dataStore, { shapes: shapesStore });
-  const report = validator.validate();
-  // Format results
-  const results = [];
-  for (const result of report.results) {
-    results.push({
-      focusNode: result.focusNode.value,
-      message: result.message.map((m: any) => m.value),
-      path: result.path ? result.path.value : undefined,
-      severity: result.severity.value,
-      sourceConstraintComponent: result.sourceConstraintComponent.value,
-      sourceShape: result.sourceShape.value
-    });
-  }
-  if (results.length === 0) {
-    results.push({ success: true, message: 'SHACL validation passed.' });
-  }
-  return results;
+  const validator = new Validator(shapesStore, { factory: rdf });
+  const report = await validator.validate(dataStore);
+  return report;
 }
 
 export function generateSampleOntology(): string {

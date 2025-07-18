@@ -59,6 +59,7 @@
     "@types/jsonld": "^1.5.15",
     "@types/n3": "^1.26.0",
     "@types/node": "^24.0.14",
+    "@types/rdf-ext": "^2.5.2",
     "@types/rdf-js": "^4.0.1",
     "@types/rdfjs__parser-n3": "^2.0.1",
     "@types/rdfjs__serializer-jsonld": "^2.0.1",

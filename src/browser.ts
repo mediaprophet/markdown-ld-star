@@ -14,7 +14,7 @@ function parseRdfStar(turtle: string, dataset: any) {
       factory.namedNode(predicate.trim()),
       factory.namedNode(object.trim())
     );
-  dataset.add(quotedQuad);
+    dataset.add(quotedQuad);
   }
 }
 
@@ -38,9 +38,6 @@ function parseRdfStarWithAnnotations(turtle: string, dataset: any) {
   }
 }
 import {
-  parseMarkdownLD,
-  markdownLDToTurtle,
-  generateSampleOntology,
   InputFormat
 } from './index.js';
 
@@ -60,7 +57,7 @@ async function fromRDFToMarkdownLD(input: string, inputFormat: InputFormat): Pro
       store.addQuads(quads);
       // Add N3.js quads to RDFJS dataset
       for (const quad of store.getQuads(null, null, null, null)) {
-        dataset.add(quad);
+        (dataset as any).add(quad);
       }
       // Basic Markdown-LD conversion: list subjects and predicates
       let md = '';
@@ -95,7 +92,7 @@ async function fromRDFToMarkdownLD(input: string, inputFormat: InputFormat): Pro
 async function validateSHACL(content: string, ontologyTtl: string): Promise<any[]> {
   try {
     const shaclModule = await import('rdf-validate-shacl');
-    const { Validator } = shaclModule;
+    const Validator = shaclModule.default || shaclModule;
     const N3 = await import('n3');
     // Parse data
     const dataParser = new N3.Parser();
@@ -108,8 +105,8 @@ async function validateSHACL(content: string, ontologyTtl: string): Promise<any[
     const shapesStore = new N3.Store();
     shapesStore.addQuads(shapesQuads);
     // Validate
-    const validator = new Validator(dataStore, { shapes: shapesStore });
-    const report = validator.validate();
+    const validator = new Validator(shapesStore);
+    const report = await validator.validate(dataStore);
     // Format results
     const results = [];
     for (const result of report.results) {
@@ -141,14 +138,17 @@ async function serializeRDFXML(dataset: any): Promise<string> {
     const quadStream = streamifyArray(Array.from(dataset));
     const stream = rdfSerialize.serialize(quadStream, { contentType: 'application/rdf+xml' });
     let rdfxml = '';
-    for await (const chunk of stream) {
-      rdfxml += chunk.toString();
-    }
+    await new Promise<void>((resolve, reject) => {
+      stream.on('data', (chunk: any) => {
+        rdfxml += chunk.toString();
+      });
+      stream.on('end', () => resolve());
+      stream.on('error', (err: any) => reject(err));
+    });
     return rdfxml.trim();
   } catch (e) {
     return `Error: ${e}`;
   }
-}
 }
 
 declare global {
@@ -160,10 +160,7 @@ declare global {
 // UMD global for browser
 if (typeof window !== 'undefined') {
   window.MarkdownLDStar = {
-    parseMarkdownLD,
     fromRDFToMarkdownLD,
-    markdownLDToTurtle,
-    validateSHACL,
-    generateSampleOntology
-  };
-}
+    validateSHACL
+    };
+  }

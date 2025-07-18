@@ -7,7 +7,9 @@ declare global {
 if (typeof window !== 'undefined') {
   window.MarkdownLDStar = {
     parseMarkdownLD,
-    fromRDFToMarkdownLD,
+    fromRDFToMarkdownLD: async function(input: string, inputFormat: InputFormat): Promise<string> {
+      return await fromRDFToMarkdownLD(input, inputFormat);
+    },
     markdownLDToTurtle,
     validateSHACL,
     generateSampleOntology

@@ -1,9 +1,10 @@
 // Manual RDF-star parsing for browser builds
 import rdf from 'rdf-ext';
 import { dataset as createDataset } from '@rdfjs/dataset';
+import type { DatasetCore } from 'rdf-js';
 const factory = rdf;
 
-function parseRdfStar(turtle: string, dataset: any) {
+function parseRdfStar(turtle: string, dataset: DatasetCore) {
   const quotedTripleRegex = /<<\s*([^>]+)\s+([^>]+)\s+([^>]+)\s*>>/g;
   let match;
   while ((match = quotedTripleRegex.exec(turtle)) !== null) {
@@ -13,11 +14,11 @@ function parseRdfStar(turtle: string, dataset: any) {
       factory.namedNode(predicate.trim()),
       factory.namedNode(object.trim())
     );
-    dataset.add(quotedQuad);
+    (dataset as any).add(quotedQuad);
   }
 }
 
-function parseRdfStarWithAnnotations(turtle: string, dataset: any) {
+function parseRdfStarWithAnnotations(turtle: string, dataset: DatasetCore) {
   const annotatedTripleRegex = /<<\s*([^>]+)\s+([^>]+)\s+([^>]+)\s*>>\s+([^ ]+)\s+([^ ;]+)\s*;/g;
   let match;
   while ((match = annotatedTripleRegex.exec(turtle)) !== null) {
@@ -32,7 +33,7 @@ function parseRdfStarWithAnnotations(turtle: string, dataset: any) {
       factory.namedNode(annotationP.trim()),
       factory.namedNode(annotationO.trim())
     );
-    dataset.add(annotationQuad);
+    (dataset as any).add(annotationQuad);
   }
 }
 
@@ -46,9 +47,8 @@ async function fromRDFToMarkdownLD(input: string, inputFormat: InputFormat): Pro
   try {
     if (inputFormat === 'turtle' || inputFormat === 'n3' || inputFormat === 'trig') {
       const dataset = createDataset();
-    // Cast to any to allow .add method (DatasetCore type lacks .add in ambient types)
-    parseRdfStar(input, dataset as any);
-    parseRdfStarWithAnnotations(input, dataset as any);
+      parseRdfStar(input, dataset);
+      parseRdfStarWithAnnotations(input, dataset);
       const parser = new N3.Parser({ format: inputFormat === 'trig' ? 'TriG' : 'Turtle' });
       const store = new N3.Store();
       const quads = parser.parse(input);
@@ -74,19 +74,13 @@ async function fromRDFToMarkdownLD(input: string, inputFormat: InputFormat): Pro
         const doc = JSON.parse(input);
         const nquads = await jsonld.toRDF(doc, { format: 'application/n-quads' });
         return nquads;
-      } catch (e) {
-        if (e instanceof Error) {
-          return `Error: ${e.message}`;
-        }
-        return `Error: ${String(e)}`;
+      } catch (e: unknown) {
+        return `Error: ${(e as Error).message}`;
       }
     }
     return 'Unsupported input format in browser build.';
-  } catch (e) {
-    if (e instanceof Error) {
-      return `Error: ${e.message}`;
-    }
-    return `Error: ${String(e)}`;
+  } catch (e: unknown) {
+    return `Error: ${(e as Error).message}`;
   }
 }
 
@@ -121,11 +115,8 @@ async function validateSHACL(content: string, ontologyTtl: string): Promise<any[
       results.push({ success: true, message: 'SHACL validation passed.' });
     }
     return results;
-  } catch (e) {
-    if (e instanceof Error) {
-      return [{ error: `SHACL validation failed: ${e.message}` }];
-    }
-    return [{ error: `SHACL validation failed: ${String(e)}` }];
+  } catch (e: unknown) {
+    return [{ error: `SHACL validation failed: ${(e as Error).message}` }];
   }
 }
 
@@ -147,11 +138,8 @@ async function serializeRDFXML(dataset: any): Promise<string> {
       stream.on('error', (err: any) => reject(err));
     });
     return rdfxml.trim();
-  } catch (e) {
-    if (e instanceof Error) {
-      return `Error: ${e.message}`;
-    }
-    return `Error: ${String(e)}`;
+  } catch (e: unknown) {
+    return `Error: ${(e as Error).message}`;
   }
 }
 

@@ -1,0 +1,68 @@
+@prefix md: <http://example.org/markdown#> .
+@prefix schema: <http://schema.org/> .
+@prefix dc: <http://purl.org/dc/elements/1.1/> .
+@prefix dcterms: <http://purl.org/dc/terms/> .
+@prefix og: <http://ogp.me/ns#> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix prov: <http://www.w3.org/ns/prov#> .
+@prefix doap: <http://usefulinc.com/ns/doap#> .
+@prefix gr: <http://purl.org/goodrelations/v1#> .
+@prefix skos: <http://www.w3.org/2004/02/skos/core#> .
+@prefix cc: <http://creativecommons.org/ns#> .
+@prefix vc: <http://www.w3.org/2006/vcard/ns#> .
+@prefix ical: <http://www.w3.org/2002/12/cal/ical#> .
+@prefix wf: <http://www.w3.org/2005/01/wf/flow#> .
+@prefix time: <http://www.w3.org/2006/time#> .
+@prefix tzont: <http://www.w3.org/2006/timezone#> .
+@prefix owl: <http://www.w3.org/2002/07/owl#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix rdf: <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+
+md:MarkdownOntology a owl:Ontology ;
+  rdfs:comment "OWL ontology for Markdown variants and sameAs mappings to common RDF ontologies." .
+
+md:Markdown a owl:Class ;
+  owl:sameAs dc:Text, schema:CreativeWork, og:article, foaf:Document, prov:Entity, doap:Project, gr:ProductOrService, skos:Concept .
+md:GitHubFlavoredMarkdown a owl:Class ;
+  rdfs:subClassOf md:Markdown ;
+  owl:sameAs schema:Article, og:article .
+md:StandardMarkdown a owl:Class ;
+  rdfs:subClassOf md:Markdown ;
+  owl:sameAs dc:Text .
+md:ObsidianMarkdown a owl:Class ;
+  rdfs:subClassOf md:Markdown ;
+  owl:sameAs schema:CreativeWork .
+md:Image a owl:Class ;
+  owl:sameAs schema:ImageObject, og:image, foaf:Image .
+md:Link a owl:Class ;
+  owl:sameAs schema:URL, og:url, foaf:page .
+md:Heading a owl:Class ;
+  owl:sameAs dcterms:title, schema:headline, og:title, skos:prefLabel .
+md:Paragraph a owl:Class ;
+  owl:sameAs schema:description, dcterms:description, og:description, skos:definition .
+md:CodeBlock a owl:Class ;
+  owl:sameAs schema:SoftwareSourceCode .
+md:Table a owl:Class ;
+  owl:sameAs schema:Table .
+md:label a owl:DatatypeProperty ;
+  rdfs:label "label" ;
+  rdfs:comment "Human-readable label for a Markdown element." ;
+  rdfs:subPropertyOf rdfs:label ;
+  owl:equivalentProperty schema:name, dc:title, og:title, skos:prefLabel .
+md:url a owl:DatatypeProperty ;
+  rdfs:label "url" ;
+  rdfs:comment "URL for a link or image." ;
+  owl:equivalentProperty schema:url, og:url, foaf:page .
+md:description a owl:DatatypeProperty ;
+  rdfs:label "description" ;
+  rdfs:comment "Description or summary of a Markdown element." ;
+  owl:equivalentProperty schema:description, dcterms:description, og:description, skos:definition .
+md:hasExtension a owl:ObjectProperty .
+
+# Example: Creative Commons, vCard, iCal, Workflow, Time, Timezone
+cc:License a owl:Class .
+vc:VCard a owl:Class .
+ical:Vcalendar a owl:Class .
+wf:Workflow a owl:Class .
+time:TemporalEntity a owl:Class .
+tzont:TimeZone a owl:Class .

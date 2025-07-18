@@ -1,11 +1,18 @@
 // UMD global for browser
-export default {
-  parseMarkdownLD,
-  fromRDFToMarkdownLD,
-  markdownLDToTurtle,
-  validateSHACL,
-  generateSampleOntology
-};
+declare global {
+  interface Window {
+    MarkdownLDStar: any;
+  }
+}
+if (typeof window !== 'undefined') {
+  window.MarkdownLDStar = {
+    parseMarkdownLD,
+    fromRDFToMarkdownLD,
+    markdownLDToTurtle,
+    validateSHACL,
+    generateSampleOntology
+  };
+}
 import N3 from 'n3';
 import { DataFactory as N3DataFactory } from 'n3';
 import { unified } from 'unified';

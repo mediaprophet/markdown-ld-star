@@ -1,0 +1,189 @@
+body {
+  background: linear-gradient(135deg, #f9f6e7 0%, #f7e7ff 100%);
+  color: #2d2d2d;
+  font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', 'Arial', sans-serif;
+  margin: 0;
+  padding: 20px;
+}
+
+
+body {
+  background: linear-gradient(135deg, #f9f6e7 0%, #f7e7ff 100%);
+  color: #2d2d2d;
+  font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', 'Arial', sans-serif;
+  margin: 0;
+  padding: 20px;
+  position: relative;
+  overflow-x: hidden;
+}
+
+/* Animated clouds */
+.pixar-cloud {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 180px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+@keyframes cloudMove {
+  0% { left: -200px; }
+  100% { left: 100vw; }
+}
+
+.cloud {
+  position: absolute;
+  top: 40px;
+  left: 0;
+  width: 180px;
+  height: 60px;
+  background: #fff;
+  border-radius: 60px;
+  box-shadow: 60px 0 0 0 #fff, 120px 0 0 0 #fff;
+  opacity: 0.7;
+  animation: cloudMove 30s linear infinite;
+}
+
+h1 {
+  color: #ffb300;
+  font-size: 3em;
+  text-shadow: 2px 2px 0 #fff, 4px 4px 0 #90caf9, 0 0 20px #fffbe7;
+  letter-spacing: 2px;
+  font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', 'Arial', sans-serif;
+  margin-bottom: 0.2em;
+  animation: bounce 1.5s infinite alternate;
+}
+
+@keyframes bounce {
+  0% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0); }
+}
+  overflow: hidden;
+}
+
+
+.tab button {
+  background: linear-gradient(45deg, #90caf9, #ffb300);
+  color: #fff;
+  padding: 15px 20px;
+  border: 2px solid #ffb300;
+  cursor: pointer;
+  flex: 1;
+  text-transform: uppercase;
+  font-size: 1.1em;
+  transition: all 0.3s;
+  box-shadow: 0 0 10px #90caf9, 0 0 20px #fffbe7;
+  border-radius: 16px 16px 0 0;
+  font-family: 'Arial Rounded MT Bold', 'Comic Sans MS', 'Arial', sans-serif;
+  letter-spacing: 1px;
+}
+
+
+.tab button:hover, .tab button.active {
+  background: linear-gradient(45deg, #ffb300, #90caf9);
+  box-shadow: 0 0 30px #ffb300, 0 0 40px #fffbe7;
+}
+
+
+.tabcontent {
+  background: #fffbe7;
+  border: 2px solid #90caf9;
+  border-radius: 0 0 16px 16px;
+  padding: 24px;
+  box-shadow: 0 0 25px #90caf9, 0 0 40px #fffbe7;
+}
+
+
+textarea, input[type="text"] {
+  background: #fffde7;
+  color: #2d2d2d;
+  border: 2px solid #90caf9;
+  border-radius: 12px;
+  padding: 12px;
+  font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', 'Arial', sans-serif;
+  font-size: 1.1em;
+  resize: vertical;
+  box-shadow: 0 0 10px #ffb300, 0 0 20px #fffbe7;
+}
+
+
+select {
+  background: #fffde7;
+  color: #2d2d2d;
+  border: 2px solid #ffb300;
+  border-radius: 12px;
+  padding: 10px;
+  margin: 10px 0;
+  box-shadow: 0 0 15px #90caf9, 0 0 20px #fffbe7;
+}
+
+
+button {
+  background: linear-gradient(45deg, #ffb300, #90caf9);
+  color: #fff;
+  border: none;
+  border-radius: 24px;
+  padding: 12px 24px;
+  text-transform: uppercase;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s;
+  box-shadow: 0 0 20px #ffb300, 0 0 30px #fffbe7;
+  font-family: 'Arial Rounded MT Bold', 'Comic Sans MS', 'Arial', sans-serif;
+  letter-spacing: 1px;
+}
+
+button:hover {
+  background: linear-gradient(45deg, #90caf9, #ffb300);
+  box-shadow: 0 0 35px #90caf9, 0 0 50px #fffbe7;
+}
+
+
+pre {
+  background: #fffde7;
+  color: #2d2d2d;
+  border: 2px solid #90caf9;
+  border-radius: 16px;
+  padding: 18px;
+  font-family: 'Comic Sans MS', 'Arial Rounded MT Bold', 'Arial', sans-serif;
+  overflow-x: auto;
+  box-shadow: 0 0 15px #ffb300, 0 0 30px #fffbe7;
+}
+
+
+.demo-sidebar {
+  flex: 0 0 220px;
+  background: #fffbe7;
+  border: 4px solid #ffb300;
+  border-radius: 16px;
+  padding: 14px;
+  box-shadow: 0 0 30px #ffb300, 0 0 40px #fffbe7;
+}
+
+
+.demo-sidebar h3 {
+  color: #90caf9;
+  text-transform: uppercase;
+  font-size: 1.3em;
+  margin: 0 0 12px;
+  text-shadow: 0 0 14px #90caf9, 0 0 20px #fffbe7;
+}
+
+
+.demo-sidebar button {
+  display: block;
+  width: 100%;
+  margin: 7px 0;
+  background: linear-gradient(45deg, #ffb300, #90caf9);
+  box-shadow: 0 0 10px #90caf9, 0 0 20px #fffbe7;
+  border-radius: 16px;
+  font-size: 1.05em;
+}
+
+.demo-sidebar button:hover {
+  background: linear-gradient(45deg, #90caf9, #ffb300);
+  box-shadow: 0 0 20px #ffb300, 0 0 30px #fffbe7;
+}

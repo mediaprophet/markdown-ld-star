@@ -1,0 +1,3 @@
+# FOAF Sample
+
+...existing content from olddemos/foaf-sample.md...

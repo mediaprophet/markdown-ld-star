@@ -1,35 +1,12 @@
-name: Build and Deploy to GitHub Pages
+name: Skip GitHub Pages Deployment
 
 on:
   push:
     branches: [main]
 
-permissions:
-  contents: write
-
 jobs:
-  deploy:
+  skip-deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout 🛎️
-        uses: actions/checkout@v4
-
-      - name: Setup Node.js 🏗️
-        uses: actions/setup-node@v4
-        with:
-          node-version: '20'
-          cache: 'npm'
-
-      - name: Install dependencies 📦
-        run: npm ci
-
-      - name: Build site 🔨
-        run: npm run build
-
-      - name: Deploy �
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: docs
-          publish_branch: gh-pages
-          force_orphan: true
+      - name: No deployment needed
+        run: echo "No site to deploy at this time. Skipping GitHub Pages deployment."

@@ -1,0 +1,81 @@
+/* NeXT theme styles for React - Modernized */
+:root {
+	--color-bg: #181818;
+	--color-text: #f5f5f5;
+	--color-primary: #00e5ff;
+	--color-card: #232323;
+	--color-border: #333;
+	--border-radius: 8px;
+	--transition: 0.3s cubic-bezier(.4,0,.2,1);
+}
+
+body {
+	background: var(--color-bg);
+	color: var(--color-text);
+	font-family: 'IBM Plex Sans', 'Segoe UI', Arial, sans-serif;
+	transition: background var(--transition), color var(--transition);
+}
+
+.card {
+	background: var(--color-card);
+	border: 1px solid var(--color-border);
+	border-radius: var(--border-radius);
+	box-shadow: 0 2px 8px rgba(0,229,255,0.04);
+	padding: 1.5rem;
+	margin: 1rem 0;
+	transition: box-shadow var(--transition), border var(--transition);
+}
+
+button, .btn {
+	background: var(--color-primary);
+	color: #181818;
+	border: none;
+	border-radius: var(--border-radius);
+	padding: 0.5rem 1.2rem;
+	font-size: 1rem;
+	cursor: pointer;
+	box-shadow: 0 1px 4px rgba(0,229,255,0.08);
+	transition: background var(--transition), box-shadow var(--transition);
+}
+button:hover, .btn:hover {
+	background: #00b8d4;
+	box-shadow: 0 2px 8px rgba(0,229,255,0.12);
+}
+
+h1, h2, h3, h4 {
+	font-weight: 600;
+	margin-top: 1.5rem;
+	margin-bottom: 0.75rem;
+}
+
+input, textarea, select {
+	border: 1px solid var(--color-border);
+	border-radius: var(--border-radius);
+	padding: 0.5rem;
+	font-size: 1rem;
+	background: #232323;
+	color: var(--color-text);
+	transition: border var(--transition);
+}
+input:focus, textarea:focus, select:focus {
+	border-color: var(--color-primary);
+	outline: none;
+}
+
+.nav {
+	display: flex;
+	gap: 1rem;
+	margin-bottom: 2rem;
+}
+.nav a {
+	color: var(--color-primary);
+	text-decoration: none;
+	font-weight: 500;
+	padding: 0.5rem 1rem;
+	border-radius: var(--border-radius);
+	transition: background var(--transition);
+}
+.nav a.active, .nav a:hover {
+	background: var(--color-primary);
+	color: #181818;
+}

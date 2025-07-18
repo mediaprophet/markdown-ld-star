@@ -1,0 +1,86 @@
+/* Commodore theme styles for React - Modernized */
+:root {
+	--color-bg: #2a2a2a;
+	--color-text: #e6e2af;
+	--color-primary: #6aafc8;
+	--color-card: #3a3a3a;
+	--color-border: #6aafc8;
+	--border-radius: 0;
+	--transition: 0.3s cubic-bezier(.4,0,.2,1);
+}
+
+body {
+	background: var(--color-bg);
+	color: var(--color-text);
+	font-family: 'VT323', 'Courier New', monospace;
+	transition: background var(--transition), color var(--transition);
+}
+
+.card {
+	background: var(--color-card);
+	border: 2px solid var(--color-border);
+	border-radius: var(--border-radius);
+	box-shadow: 0 2px 8px rgba(106,175,200,0.08);
+	padding: 1.5rem;
+	margin: 1rem 0;
+	transition: box-shadow var(--transition), border var(--transition);
+}
+
+button, .btn {
+	background: var(--color-primary);
+	color: #fff;
+	border: 2px solid #fff;
+	border-radius: var(--border-radius);
+	padding: 0.5rem 1.2rem;
+	font-size: 1rem;
+	cursor: pointer;
+	box-shadow: 0 1px 4px rgba(106,175,200,0.08);
+	transition: background var(--transition), box-shadow var(--transition);
+	font-family: 'VT323', 'Courier New', monospace;
+}
+button:hover, .btn:hover {
+	background: #4f8ca7;
+	box-shadow: 0 2px 8px rgba(106,175,200,0.12);
+}
+
+h1, h2, h3, h4 {
+	font-family: 'VT323', 'Courier New', monospace;
+	font-weight: 700;
+	margin-top: 1.5rem;
+	margin-bottom: 0.75rem;
+}
+
+input, textarea, select {
+	border: 2px solid var(--color-border);
+	border-radius: var(--border-radius);
+	padding: 0.5rem;
+	font-size: 1rem;
+	background: #3a3a3a;
+	color: var(--color-text);
+	transition: border var(--transition);
+	font-family: 'VT323', 'Courier New', monospace;
+}
+input:focus, textarea:focus, select:focus {
+	border-color: #fff;
+	outline: none;
+}
+
+.nav {
+	display: flex;
+	gap: 1rem;
+	margin-bottom: 2rem;
+}
+.nav a {
+	color: var(--color-primary);
+	text-decoration: none;
+	font-weight: 500;
+	padding: 0.5rem 1rem;
+	border-radius: var(--border-radius);
+	border: 2px solid var(--color-border);
+	transition: background var(--transition);
+	font-family: 'VT323', 'Courier New', monospace;
+}
+.nav a.active, .nav a:hover {
+	background: var(--color-primary);
+	color: #fff;
+}

@@ -1,0 +1,26 @@
+[
+  {
+    "problem": "RDF/XML serialization is not available in browser builds.",
+    "status": "unsolved"
+  },
+  {
+    "problem": "JSON-LD serialization is not available in browser builds.",
+    "status": "unsolved"
+  },
+  {
+    "problem": "SHACL validation is not implemented in this build.",
+    "status": "unsolved"
+  },
+  {
+    "problem": "Rollup build has minor circular dependency warnings (not critical for browser builds).",
+    "status": "unsolved"
+  },
+  {
+    "problem": "Test suite may not fully cover all edge cases for RDF-star quoted triples and annotation triples.",
+    "status": "unsolved"
+  },
+  {
+    "problem": "N3.js does not support full RDF-star features in browser builds.",
+    "status": "unsolved"
+  }
+]

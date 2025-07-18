@@ -7,8 +7,9 @@
 "outDir": "./dist",
 "strict": true,
 "esModuleInterop": true,
-"skipLibCheck": true
+"skipLibCheck": true,
+"isolatedModules": true
 },
 "include": ["src/**/*"],
-"exclude": ["node_modules", "tests", "demos"]
+	"exclude": ["node_modules", "tests", "olddemos", "demos"]
 }

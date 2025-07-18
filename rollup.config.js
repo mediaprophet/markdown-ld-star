@@ -34,32 +34,47 @@ export default [
   },
   // Browser UMD build, fully bundled (unminified)
   {
-    input: 'src/index.ts',
+    input: 'src/browser.ts',
     output: {
       file: 'dist/index.browser.js',
       format: 'umd',
       name: 'MarkdownLDStar',
+      globals: {
+        'streamify-array': 'streamifyArray',
+        'fs': 'fs',
+        'buffer': 'Buffer',
+        'events': 'Events'
+      }
     },
     plugins: [
       // For browser builds, resolve browser-specific fields
-      resolve({ browser: true }),
+      resolve({ browser: true, preferBuiltins: false }),
       commonjs(),
-      typescript({ tsconfig: './tsconfig.json' })
+      typescript({ tsconfig: './tsconfig.json' }),
+      // Add polyfill-node for browser shims
+      require('rollup-plugin-polyfill-node')()
     ],
   },
   // Browser UMD build, minified
   {
-    input: 'src/index.ts',
+    input: 'src/browser.ts',
     output: {
       file: 'dist/index.browser.min.js',
       format: 'umd',
       name: 'MarkdownLDStar',
+      globals: {
+        'streamify-array': 'streamifyArray',
+        'fs': 'fs',
+        'buffer': 'Buffer',
+        'events': 'Events'
+      }
     },
     plugins: [
-      resolve({ browser: true }),
+      resolve({ browser: true, preferBuiltins: false }),
       commonjs(),
       typescript({ tsconfig: './tsconfig.json' }),
-      terser()
+      terser(),
+      require('rollup-plugin-polyfill-node')()
     ],
   }
 ];

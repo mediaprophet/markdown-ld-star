@@ -1,0 +1,470 @@
+{
+  "@graph": [
+    {
+      "@id": "_:n3-0",
+      "@type": "http://www.w3.org/2002/07/owl#Class",
+      "http://www.w3.org/2002/07/owl#unionOf": {
+        "@list": [
+          {
+            "@id": "http://example.org/markdown#BlockElement"
+          },
+          {
+            "@id": "http://example.org/markdown#InlineElement"
+          }
+        ]
+      }
+    },
+    {
+      "@id": "_:n3-3",
+      "@type": "http://www.w3.org/2002/07/owl#Class",
+      "http://www.w3.org/2002/07/owl#unionOf": {
+        "@list": [
+          {
+            "@id": "http://example.org/markdown#InlineElement"
+          },
+          {
+            "@id": "http://example.org/markdown#BlockElement"
+          }
+        ]
+      }
+    },
+    {
+      "@id": "_:n3-6",
+      "@type": "http://www.w3.org/2002/07/owl#Class",
+      "http://www.w3.org/2002/07/owl#unionOf": {
+        "@list": [
+          {
+            "@id": "http://example.org/markdown#InlineElement"
+          },
+          {
+            "@id": "http://example.org/markdown#BlockElement"
+          }
+        ]
+      }
+    },
+    {
+      "@id": "_:n3-9",
+      "@type": "http://www.w3.org/2002/07/owl#Class",
+      "http://www.w3.org/2002/07/owl#unionOf": {
+        "@list": [
+          {
+            "@id": "http://example.org/markdown#BlockElement"
+          },
+          {
+            "@id": "http://example.org/markdown#InlineElement"
+          }
+        ]
+      }
+    },
+    {
+      "@id": "http://example.org/markdown#Admonition",
+      "@type": "http://www.w3.org/2002/07/owl#Class",
+      "http://www.w3.org/2000/01/rdf-schema#comment": "Admonition block (e.g., :::note).",
+      "http://www.w3.org/2000/01/rdf-schema#label": "Admonition",
+      "http://www.w3.org/2000/01/rdf-schema#subClassOf": {
+        "@id": "http://example.org/markdown#BlockElement"
+      }
+    },
+    {
+      "@id": "http://example.org/markdown#BlockElement",
+      "@type": "http://www.w3.org/2002/07/owl#Class",
+      "http://www.w3.org/2000/01/rdf-schema#comment": "Structural elements that form the document's layout.",
+      "http://www.w3.org/2000/01/rdf-schema#label": "Block Element",
+      "http://www.w3.org/2000/01/rdf-schema#subClassOf": {
+        "@id": "http://example.org/markdown#Document"
+      }
+    },
+    {
+      "@id": "http://example.org/markdown#Blockquote",
+      "@type": "http://www.w3.org/2002/07/owl#Class",
+      "http://www.w3.org/2000/01/rdf-schema#comment": "Quoted content prefixed by >.",
+      "http://www.w3.org/2000/01/rdf-schema#label": "Blockquote",
+      "http://www.w3.org/2000/01/rdf-schema#subClassOf": {
+        "@id": "http://example.org/markdown#BlockElement"
+      }
+    },
+    {
+      "@id": "http://example.org/markdown#Callout",
+      "@type": "http://www.w3.org/2002/07/owl#Class",
+      "http://www.w3.org/2000/01/rdf-schema#comment": "Obsidian callout blocks (e.g., > [!note]).",
+      "http://www.w3.org/2000/01/rdf-schema#label": "Callout",
+      "http://www.w3.org/2000/01/rdf-schema#subClassOf": {
+        "@id": "http://example.org/markdown#BlockElement"
+      }
+    },
+    {
+      "@id": "http://example.org/markdown#CodeBlock",
+      "@type": "http://www.w3.org/2002/07/owl#Class",
+      "http://www.w3.org/2000/01/rdf-schema#comment": "Fenced or indented code blocks.",
+      "http://www.w3.org/2000/01/rdf-schema#label": "Code Block",
+      "http://www.w3.org/2000/01/rdf-schema#subClassOf": {
+        "@id": "http://example.org/markdown#BlockElement"
+      }
+    },
+    {
+      "@id": "http://example.org/markdown#CodeSpan",
+      "@type": "http://www.w3.org/2002/07/owl#Class",
+      "http://www.w3.org/2000/01/rdf-schema#comment": "Inline code using backticks.",
+      "http://www.w3.org/2000/01/rdf-schema#label": "Code Span",
+      "http://www.w3.org/2000/01/rdf-schema#subClassOf": {
+        "@id": "http://example.org/markdown#InlineElement"
+      }
+    },
+    {
+      "@id": "http://example.org/markdown#Document",
+      "@type": "http://www.w3.org/2002/07/owl#Class",
+      "http://www.w3.org/2000/01/rdf-schema#comment": "The root element of a Markdown document containing block-level and inline elements.",
+      "http://www.w3.org/2000/01/rdf-schema#label": "Document",
+      "http://www.w3.org/2002/07/owl#sameAs": {
+        "@id": "http://schema.org/CreativeWork"
+      }
+    },
+    {
+      "@id": "http://example.org/markdown#Emphasis",
+      "@type": "http://www.w3.org/2002/07/owl#Class",
+      "http://www.w3.org/2000/01/rdf-schema#comment": "Italic text using * or _.",
+      "http://www.w3.org/2000/01/rdf-schema#label": "Emphasis",
+      "http://www.w3.org/2000/01/rdf-schema#subClassOf": {
+        "@id": "http://example.org/markdown#InlineElement"
+      }
+    },
+    {
+      "@id": "http://example.org/markdown#Footnote",
+      "@type": "http://www.w3.org/2002/07/owl#Class",
+      "http://www.w3.org/2000/01/rdf-schema#comment": "GFM/Obsidian footnotes ([^1]).",
+      "http://www.w3.org/2000/01/rdf-schema#label": "Footnote",
+      "http://www.w3.org/2000/01/rdf-schema#subClassOf": {
+        "@id": "http://example.org/markdown#InlineElement"
+      }
+    },
+    {
+      "@id": "http://example.org/markdown#Frontmatter",
+      "@type": "http://www.w3.org/2002/07/owl#Class",
+      "http://www.w3.org/2000/01/rdf-schema#comment": "YAML metadata block at the start of a Markdown document.",
+      "http://www.w3.org/2000/01/rdf-schema#label": "Frontmatter",
+      "http://www.w3.org/2000/01/rdf-schema#subClassOf": {
+        "@id": "http://example.org/markdown#BlockElement"
+      },
+      "http://www.w3.org/2002/07/owl#sameAs": {
+        "@id": "http://schema.org/CreativeWork"
+      }
+    },
+    {
+      "@id": "http://example.org/markdown#Heading",
+      "@type": "http://www.w3.org/2002/07/owl#Class",
+      "http://www.w3.org/2000/01/rdf-schema#comment": "Section titles marked by # symbols, levels 1-6.",
+      "http://www.w3.org/2000/01/rdf-schema#label": "Heading",
+      "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+        {
+          "@id": "http://example.org/markdown#BlockElement"
+        },
+        {
+          "@id": "http://example.org/markdown#HeadingConstraint"
+        }
+      ]
+    },
+    {
+      "@id": "http://example.org/markdown#HeadingConstraint",
+      "@type": "http://www.w3.org/2002/07/owl#Restriction",
+      "http://www.w3.org/2002/07/owl#maxInclusive": {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": "6"
+      },
+      "http://www.w3.org/2002/07/owl#minInclusive": {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": "1"
+      },
+      "http://www.w3.org/2002/07/owl#onProperty": {
+        "@id": "http://example.org/markdown#level"
+      }
+    },
+    {
+      "@id": "http://example.org/markdown#HorizontalRule",
+      "@type": "http://www.w3.org/2002/07/owl#Class",
+      "http://www.w3.org/2000/01/rdf-schema#comment": "Thematic breaks using ---, ***, or ___.",
+      "http://www.w3.org/2000/01/rdf-schema#label": "Horizontal Rule",
+      "http://www.w3.org/2000/01/rdf-schema#subClassOf": {
+        "@id": "http://example.org/markdown#BlockElement"
+      }
+    },
+    {
+      "@id": "http://example.org/markdown#Image",
+      "@type": "http://www.w3.org/2002/07/owl#Class",
+      "http://www.w3.org/2000/01/rdf-schema#comment": "Images using ![alt](url).",
+      "http://www.w3.org/2000/01/rdf-schema#label": "Image",
+      "http://www.w3.org/2000/01/rdf-schema#subClassOf": {
+        "@id": "http://example.org/markdown#InlineElement"
+      },
+      "http://www.w3.org/2002/07/owl#sameAs": {
+        "@id": "http://schema.org/ImageObject"
+      }
+    },
+    {
+      "@id": "http://example.org/markdown#InlineElement",
+      "@type": "http://www.w3.org/2002/07/owl#Class",
+      "http://www.w3.org/2000/01/rdf-schema#comment": "Formatting elements within block-level content.",
+      "http://www.w3.org/2000/01/rdf-schema#label": "Inline Element",
+      "http://www.w3.org/2000/01/rdf-schema#subClassOf": {
+        "@id": "http://example.org/markdown#Document"
+      }
+    },
+    {
+      "@id": "http://example.org/markdown#Link",
+      "@type": "http://www.w3.org/2002/07/owl#Class",
+      "http://www.w3.org/2000/01/rdf-schema#comment": "Hyperlinks using [text](url).",
+      "http://www.w3.org/2000/01/rdf-schema#label": "Link",
+      "http://www.w3.org/2000/01/rdf-schema#subClassOf": {
+        "@id": "http://example.org/markdown#InlineElement"
+      },
+      "http://www.w3.org/2002/07/owl#sameAs": {
+        "@id": "http://schema.org/URL"
+      }
+    },
+    {
+      "@id": "http://example.org/markdown#List",
+      "@type": "http://www.w3.org/2002/07/owl#Class",
+      "http://www.w3.org/2000/01/rdf-schema#comment": "Unordered or ordered lists.",
+      "http://www.w3.org/2000/01/rdf-schema#label": "List",
+      "http://www.w3.org/2000/01/rdf-schema#subClassOf": {
+        "@id": "http://example.org/markdown#BlockElement"
+      }
+    },
+    {
+      "@id": "http://example.org/markdown#MarkdownOntology",
+      "@type": "http://www.w3.org/2002/07/owl#Ontology",
+      "http://www.w3.org/2000/01/rdf-schema#comment": "An RDF ontology for Markdown format based on GitHub Flavored Markdown (GFM) specification.",
+      "http://www.w3.org/2000/01/rdf-schema#label": "Markdown Ontology"
+    },
+    {
+      "@id": "http://example.org/markdown#MathBlock",
+      "@type": "http://www.w3.org/2002/07/owl#Class",
+      "http://www.w3.org/2000/01/rdf-schema#comment": "LaTeX math block (e.g., $$...$$).",
+      "http://www.w3.org/2000/01/rdf-schema#label": "Math Block",
+      "http://www.w3.org/2000/01/rdf-schema#subClassOf": {
+        "@id": "http://example.org/markdown#BlockElement"
+      }
+    },
+    {
+      "@id": "http://example.org/markdown#Paragraph",
+      "@type": "http://www.w3.org/2002/07/owl#Class",
+      "http://www.w3.org/2000/01/rdf-schema#comment": "A block of text separated by blank lines.",
+      "http://www.w3.org/2000/01/rdf-schema#label": "Paragraph",
+      "http://www.w3.org/2000/01/rdf-schema#subClassOf": {
+        "@id": "http://example.org/markdown#BlockElement"
+      }
+    },
+    {
+      "@id": "http://example.org/markdown#Strikethrough",
+      "@type": "http://www.w3.org/2002/07/owl#Class",
+      "http://www.w3.org/2000/01/rdf-schema#comment": "GFM extension using ~~text~~.",
+      "http://www.w3.org/2000/01/rdf-schema#label": "Strikethrough",
+      "http://www.w3.org/2000/01/rdf-schema#subClassOf": {
+        "@id": "http://example.org/markdown#InlineElement"
+      }
+    },
+    {
+      "@id": "http://example.org/markdown#StrongEmphasis",
+      "@type": "http://www.w3.org/2002/07/owl#Class",
+      "http://www.w3.org/2000/01/rdf-schema#comment": "Bold text using ** or __.",
+      "http://www.w3.org/2000/01/rdf-schema#label": "Strong Emphasis",
+      "http://www.w3.org/2000/01/rdf-schema#subClassOf": {
+        "@id": "http://example.org/markdown#InlineElement"
+      }
+    },
+    {
+      "@id": "http://example.org/markdown#Table",
+      "@type": "http://www.w3.org/2002/07/owl#Class",
+      "http://www.w3.org/2000/01/rdf-schema#comment": "GFM extension for tables using | separators.",
+      "http://www.w3.org/2000/01/rdf-schema#label": "Table",
+      "http://www.w3.org/2000/01/rdf-schema#subClassOf": {
+        "@id": "http://example.org/markdown#BlockElement"
+      }
+    },
+    {
+      "@id": "http://example.org/markdown#TaskList",
+      "@type": "http://www.w3.org/2002/07/owl#Class",
+      "http://www.w3.org/2000/01/rdf-schema#comment": "GFM extension for checklists in lists.",
+      "http://www.w3.org/2000/01/rdf-schema#label": "Task List",
+      "http://www.w3.org/2000/01/rdf-schema#subClassOf": {
+        "@id": "http://example.org/markdown#InlineElement"
+      }
+    },
+    {
+      "@id": "http://example.org/markdown#Wikilink",
+      "@type": "http://www.w3.org/2002/07/owl#Class",
+      "http://www.w3.org/2000/01/rdf-schema#comment": "Obsidian-style [[wikilinks]].",
+      "http://www.w3.org/2000/01/rdf-schema#label": "Wikilink",
+      "http://www.w3.org/2000/01/rdf-schema#subClassOf": {
+        "@id": "http://example.org/markdown#InlineElement"
+      }
+    },
+    {
+      "@id": "http://example.org/markdown#exampleDoc1",
+      "@type": "http://example.org/markdown#Document",
+      "http://example.org/markdown#hasBlock": [
+        {
+          "@id": "http://example.org/markdown#exampleHeading1"
+        },
+        {
+          "@id": "http://example.org/markdown#examplePara1"
+        },
+        {
+          "@id": "http://example.org/markdown#exampleList1"
+        },
+        {
+          "@id": "http://example.org/markdown#exampleFrontmatter1"
+        }
+      ]
+    },
+    {
+      "@id": "http://example.org/markdown#exampleFrontmatter1",
+      "@type": "http://example.org/markdown#Frontmatter",
+      "http://www.w3.org/2000/01/rdf-schema#label": "---\ntitle: Example\n---"
+    },
+    {
+      "@id": "http://example.org/markdown#exampleHeading1",
+      "@type": "http://example.org/markdown#Heading",
+      "http://example.org/markdown#level": {
+        "@type": "http://www.w3.org/2001/XMLSchema#integer",
+        "@value": "1"
+      },
+      "http://www.w3.org/2000/01/rdf-schema#label": "Example Heading"
+    },
+    {
+      "@id": "http://example.org/markdown#exampleLink1",
+      "@type": "http://example.org/markdown#Link",
+      "http://example.org/markdown#references": {
+        "@id": "https://github.com/"
+      },
+      "http://www.w3.org/2000/01/rdf-schema#label": "GitHub"
+    },
+    {
+      "@id": "http://example.org/markdown#exampleList1",
+      "@type": "http://example.org/markdown#List",
+      "http://example.org/markdown#hasChild": {
+        "@id": "http://example.org/markdown#exampleTask1"
+      }
+    },
+    {
+      "@id": "http://example.org/markdown#examplePara1",
+      "@type": "http://example.org/markdown#Paragraph",
+      "http://example.org/markdown#hasInline": [
+        {
+          "@id": "http://example.org/markdown#exampleLink1"
+        },
+        {
+          "@id": "http://example.org/markdown#exampleWikilink1"
+        }
+      ]
+    },
+    {
+      "@id": "http://example.org/markdown#exampleTask1",
+      "@type": "http://example.org/markdown#TaskList",
+      "http://www.w3.org/2000/01/rdf-schema#label": "[x] Write ontology"
+    },
+    {
+      "@id": "http://example.org/markdown#exampleWikilink1",
+      "@type": "http://example.org/markdown#Wikilink",
+      "http://example.org/markdown#references": {
+        "@id": "obsidian://HomePage"
+      },
+      "http://www.w3.org/2000/01/rdf-schema#label": "HomePage"
+    },
+    {
+      "@id": "http://example.org/markdown#hasBlock",
+      "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
+      "http://www.w3.org/2000/01/rdf-schema#comment": "Relates a document or container to a block-level element.",
+      "http://www.w3.org/2000/01/rdf-schema#domain": {
+        "@id": "http://example.org/markdown#Document"
+      },
+      "http://www.w3.org/2000/01/rdf-schema#label": "has Block",
+      "http://www.w3.org/2000/01/rdf-schema#range": {
+        "@id": "http://example.org/markdown#BlockElement"
+      }
+    },
+    {
+      "@id": "http://example.org/markdown#hasChild",
+      "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
+      "http://www.w3.org/2000/01/rdf-schema#comment": "Relates a parent element to its child (e.g., nested lists, blockquotes).",
+      "http://www.w3.org/2000/01/rdf-schema#domain": {
+        "@id": "http://example.org/markdown#BlockElement"
+      },
+      "http://www.w3.org/2000/01/rdf-schema#label": "has Child",
+      "http://www.w3.org/2000/01/rdf-schema#range": {
+        "@id": "http://example.org/markdown#BlockElement"
+      }
+    },
+    {
+      "@id": "http://example.org/markdown#hasInline",
+      "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
+      "http://www.w3.org/2000/01/rdf-schema#comment": "Relates a block-level element to an inline element.",
+      "http://www.w3.org/2000/01/rdf-schema#domain": {
+        "@id": "http://example.org/markdown#BlockElement"
+      },
+      "http://www.w3.org/2000/01/rdf-schema#label": "has Inline",
+      "http://www.w3.org/2000/01/rdf-schema#range": {
+        "@id": "http://example.org/markdown#InlineElement"
+      }
+    },
+    {
+      "@id": "http://example.org/markdown#hasParent",
+      "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
+      "http://www.w3.org/2000/01/rdf-schema#comment": "Relates a child element to its parent.",
+      "http://www.w3.org/2000/01/rdf-schema#domain": {
+        "@id": "http://example.org/markdown#BlockElement"
+      },
+      "http://www.w3.org/2000/01/rdf-schema#label": "has Parent",
+      "http://www.w3.org/2000/01/rdf-schema#range": {
+        "@id": "http://example.org/markdown#BlockElement"
+      }
+    },
+    {
+      "@id": "http://example.org/markdown#level",
+      "@type": "http://www.w3.org/2002/07/owl#DatatypeProperty",
+      "http://www.w3.org/2000/01/rdf-schema#comment": "Level of headings (1-6).",
+      "http://www.w3.org/2000/01/rdf-schema#domain": {
+        "@id": "http://example.org/markdown#Heading"
+      },
+      "http://www.w3.org/2000/01/rdf-schema#label": "level",
+      "http://www.w3.org/2000/01/rdf-schema#range": {
+        "@id": "http://www.w3.org/2001/XMLSchema#integer"
+      }
+    },
+    {
+      "@id": "http://example.org/markdown#references",
+      "@type": "http://www.w3.org/2002/07/owl#ObjectProperty",
+      "http://www.w3.org/2000/01/rdf-schema#comment": "Relates an element to another it references (e.g., links, images, footnotes).",
+      "http://www.w3.org/2000/01/rdf-schema#domain": {
+        "@id": "_:n3-3"
+      },
+      "http://www.w3.org/2000/01/rdf-schema#label": "references",
+      "http://www.w3.org/2000/01/rdf-schema#range": {
+        "@id": "_:n3-6"
+      }
+    },
+    {
+      "@id": "http://example.org/markdown#supportedIn",
+      "@type": "http://www.w3.org/2002/07/owl#DatatypeProperty",
+      "http://www.w3.org/2000/01/rdf-schema#comment": "Indicates which Markdown variant(s) support this feature (e.g., 'GFM', 'Obsidian', 'Standard').",
+      "http://www.w3.org/2000/01/rdf-schema#domain": {
+        "@id": "_:n3-9"
+      },
+      "http://www.w3.org/2000/01/rdf-schema#label": "supported In",
+      "http://www.w3.org/2000/01/rdf-schema#range": {
+        "@id": "http://www.w3.org/2000/01/rdf-schema#Literal"
+      }
+    },
+    {
+      "@id": "http://example.org/markdown#syntaxRule",
+      "@type": "http://www.w3.org/2002/07/owl#DatatypeProperty",
+      "http://www.w3.org/2000/01/rdf-schema#comment": "Defines the syntax rule for an element.",
+      "http://www.w3.org/2000/01/rdf-schema#domain": {
+        "@id": "_:n3-0"
+      },
+      "http://www.w3.org/2000/01/rdf-schema#label": "syntax Rule",
+      "http://www.w3.org/2000/01/rdf-schema#range": {
+        "@id": "http://www.w3.org/2000/01/rdf-schema#Literal"
+      }
+    }
+  ]
+}

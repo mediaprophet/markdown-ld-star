@@ -1,0 +1,80 @@
+/* Pixar theme styles for React - Modernized */
+:root {
+	--color-bg: #fdf6e3;
+	--color-text: #2d2d2d;
+	--color-primary: #ff9800;
+	--color-card: #fffbe6;
+	--color-border: #ffe0b2;
+	--border-radius: 16px;
+	--transition: 0.3s cubic-bezier(.4,0,.2,1);
+}
+
+body {
+	background: var(--color-bg);
+	color: var(--color-text);
+	font-family: 'Quicksand', 'Segoe UI', Arial, sans-serif;
+	transition: background var(--transition), color var(--transition);
+}
+
+.card {
+	background: var(--color-card);
+	border: 2px solid var(--color-border);
+	border-radius: var(--border-radius);
+	box-shadow: 0 4px 16px rgba(255,152,0,0.08);
+	padding: 2rem;
+	margin: 1.5rem 0;
+	transition: box-shadow var(--transition), border var(--transition);
+}
+
+button, .btn {
+	background: var(--color-primary);
+	color: #fff;
+	border: none;
+	border-radius: var(--border-radius);
+	padding: 0.7rem 1.5rem;
+	font-size: 1.1rem;
+	cursor: pointer;
+	box-shadow: 0 2px 8px rgba(255,152,0,0.12);
+	transition: background var(--transition), box-shadow var(--transition);
+}
+button:hover, .btn:hover {
+	background: #fb8c00;
+	box-shadow: 0 4px 16px rgba(255,152,0,0.18);
+}
+
+h1, h2, h3, h4 {
+	font-family: 'Quicksand', 'Segoe UI', Arial, sans-serif;
+	font-weight: 700;
+	margin-top: 2rem;
+	margin-bottom: 1rem;
+}
+
+input, textarea, select {
+	border: 2px solid var(--color-border);
+	border-radius: var(--border-radius);
+	padding: 0.7rem;
+	font-size: 1.1rem;
+	transition: border var(--transition);
+}
+input:focus, textarea:focus, select:focus {
+	border-color: var(--color-primary);
+	outline: none;
+}
+
+.nav {
+	display: flex;
+	gap: 1.2rem;
+	margin-bottom: 2.5rem;
+}
+.nav a {
+	color: var(--color-primary);
+	text-decoration: none;
+	font-weight: 600;
+	padding: 0.7rem 1.2rem;
+	border-radius: var(--border-radius);
+	transition: background var(--transition);
+}
+.nav a.active, .nav a:hover {
+	background: var(--color-primary);
+	color: #fff;
+}

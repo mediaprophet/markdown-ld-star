@@ -1,0 +1,1310 @@
+{
+  "http://example.org/markdown#Wikilink": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/2002/07/owl#Class"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "type": "literal",
+        "value": "Wikilink",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "type": "literal",
+        "value": "Obsidian-style [[wikilinks]].",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#InlineElement"
+      }
+    ]
+  },
+  "http://example.org/markdown#Callout": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/2002/07/owl#Class"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "type": "literal",
+        "value": "Callout",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "type": "literal",
+        "value": "Obsidian callout blocks (e.g., > [!note]).",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#BlockElement"
+      }
+    ]
+  },
+  "http://example.org/markdown#Footnote": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/2002/07/owl#Class"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "type": "literal",
+        "value": "Footnote",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "type": "literal",
+        "value": "GFM/Obsidian footnotes ([^1]).",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#InlineElement"
+      }
+    ]
+  },
+  "http://example.org/markdown#Frontmatter": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/2002/07/owl#Class"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "type": "literal",
+        "value": "Frontmatter",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "type": "literal",
+        "value": "YAML metadata block at the start of a Markdown document.",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#BlockElement"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#sameAs": [
+      {
+        "type": "uri",
+        "value": "http://schema.org/CreativeWork"
+      }
+    ]
+  },
+  "http://example.org/markdown#MathBlock": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/2002/07/owl#Class"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "type": "literal",
+        "value": "Math Block",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "type": "literal",
+        "value": "LaTeX math block (e.g., $$...$$).",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#BlockElement"
+      }
+    ]
+  },
+  "http://example.org/markdown#Admonition": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/2002/07/owl#Class"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "type": "literal",
+        "value": "Admonition",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "type": "literal",
+        "value": "Admonition block (e.g., :::note).",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#BlockElement"
+      }
+    ]
+  },
+  "http://example.org/markdown#MarkdownOntology": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/2002/07/owl#Ontology"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "type": "literal",
+        "value": "Markdown Ontology",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "type": "literal",
+        "value": "An RDF ontology for Markdown format based on GitHub Flavored Markdown (GFM) specification.",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ]
+  },
+  "http://example.org/markdown#Document": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/2002/07/owl#Class"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "type": "literal",
+        "value": "Document",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "type": "literal",
+        "value": "The root element of a Markdown document containing block-level and inline elements.",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#sameAs": [
+      {
+        "type": "uri",
+        "value": "http://schema.org/CreativeWork"
+      }
+    ]
+  },
+  "http://example.org/markdown#BlockElement": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/2002/07/owl#Class"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "type": "literal",
+        "value": "Block Element",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "type": "literal",
+        "value": "Structural elements that form the document's layout.",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#Document"
+      }
+    ]
+  },
+  "http://example.org/markdown#InlineElement": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/2002/07/owl#Class"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "type": "literal",
+        "value": "Inline Element",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "type": "literal",
+        "value": "Formatting elements within block-level content.",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#Document"
+      }
+    ]
+  },
+  "http://example.org/markdown#Paragraph": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/2002/07/owl#Class"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "type": "literal",
+        "value": "Paragraph",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "type": "literal",
+        "value": "A block of text separated by blank lines.",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#BlockElement"
+      }
+    ]
+  },
+  "http://example.org/markdown#Heading": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/2002/07/owl#Class"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "type": "literal",
+        "value": "Heading",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "type": "literal",
+        "value": "Section titles marked by # symbols, levels 1-6.",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#BlockElement"
+      },
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#HeadingConstraint"
+      }
+    ]
+  },
+  "http://example.org/markdown#List": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/2002/07/owl#Class"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "type": "literal",
+        "value": "List",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "type": "literal",
+        "value": "Unordered or ordered lists.",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#BlockElement"
+      }
+    ]
+  },
+  "http://example.org/markdown#Blockquote": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/2002/07/owl#Class"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "type": "literal",
+        "value": "Blockquote",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "type": "literal",
+        "value": "Quoted content prefixed by >.",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#BlockElement"
+      }
+    ]
+  },
+  "http://example.org/markdown#CodeBlock": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/2002/07/owl#Class"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "type": "literal",
+        "value": "Code Block",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "type": "literal",
+        "value": "Fenced or indented code blocks.",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#BlockElement"
+      }
+    ]
+  },
+  "http://example.org/markdown#HorizontalRule": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/2002/07/owl#Class"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "type": "literal",
+        "value": "Horizontal Rule",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "type": "literal",
+        "value": "Thematic breaks using ---, ***, or ___.",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#BlockElement"
+      }
+    ]
+  },
+  "http://example.org/markdown#Table": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/2002/07/owl#Class"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "type": "literal",
+        "value": "Table",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "type": "literal",
+        "value": "GFM extension for tables using | separators.",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#BlockElement"
+      }
+    ]
+  },
+  "http://example.org/markdown#Emphasis": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/2002/07/owl#Class"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "type": "literal",
+        "value": "Emphasis",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "type": "literal",
+        "value": "Italic text using * or _.",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#InlineElement"
+      }
+    ]
+  },
+  "http://example.org/markdown#StrongEmphasis": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/2002/07/owl#Class"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "type": "literal",
+        "value": "Strong Emphasis",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "type": "literal",
+        "value": "Bold text using ** or __.",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#InlineElement"
+      }
+    ]
+  },
+  "http://example.org/markdown#Link": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/2002/07/owl#Class"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "type": "literal",
+        "value": "Link",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "type": "literal",
+        "value": "Hyperlinks using [text](url).",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#InlineElement"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#sameAs": [
+      {
+        "type": "uri",
+        "value": "http://schema.org/URL"
+      }
+    ]
+  },
+  "http://example.org/markdown#Image": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/2002/07/owl#Class"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "type": "literal",
+        "value": "Image",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "type": "literal",
+        "value": "Images using ![alt](url).",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#InlineElement"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#sameAs": [
+      {
+        "type": "uri",
+        "value": "http://schema.org/ImageObject"
+      }
+    ]
+  },
+  "http://example.org/markdown#CodeSpan": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/2002/07/owl#Class"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "type": "literal",
+        "value": "Code Span",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "type": "literal",
+        "value": "Inline code using backticks.",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#InlineElement"
+      }
+    ]
+  },
+  "http://example.org/markdown#Strikethrough": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/2002/07/owl#Class"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "type": "literal",
+        "value": "Strikethrough",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "type": "literal",
+        "value": "GFM extension using ~~text~~.",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#InlineElement"
+      }
+    ]
+  },
+  "http://example.org/markdown#TaskList": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/2002/07/owl#Class"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "type": "literal",
+        "value": "Task List",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "type": "literal",
+        "value": "GFM extension for checklists in lists.",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#subClassOf": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#InlineElement"
+      }
+    ]
+  },
+  "http://example.org/markdown#hasBlock": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/2002/07/owl#ObjectProperty"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "type": "literal",
+        "value": "has Block",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "type": "literal",
+        "value": "Relates a document or container to a block-level element.",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#Document"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#BlockElement"
+      }
+    ]
+  },
+  "http://example.org/markdown#hasInline": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/2002/07/owl#ObjectProperty"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "type": "literal",
+        "value": "has Inline",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "type": "literal",
+        "value": "Relates a block-level element to an inline element.",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#BlockElement"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#InlineElement"
+      }
+    ]
+  },
+  "http://example.org/markdown#syntaxRule": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/2002/07/owl#DatatypeProperty"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "type": "literal",
+        "value": "syntax Rule",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "type": "literal",
+        "value": "Defines the syntax rule for an element.",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "type": "uri",
+        "value": "n3-0"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/2000/01/rdf-schema#Literal"
+      }
+    ]
+  },
+  "n3-0": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/2002/07/owl#Class"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#unionOf": [
+      {
+        "type": "uri",
+        "value": "n3-1"
+      }
+    ]
+  },
+  "n3-1": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#first": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#BlockElement"
+      }
+    ],
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest": [
+      {
+        "type": "uri",
+        "value": "n3-2"
+      }
+    ]
+  },
+  "n3-2": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#first": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#InlineElement"
+      }
+    ],
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"
+      }
+    ]
+  },
+  "http://example.org/markdown#level": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/2002/07/owl#DatatypeProperty"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "type": "literal",
+        "value": "level",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "type": "literal",
+        "value": "Level of headings (1-6).",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#Heading"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/2001/XMLSchema#integer"
+      }
+    ]
+  },
+  "http://example.org/markdown#references": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/2002/07/owl#ObjectProperty"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "type": "literal",
+        "value": "references",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "type": "literal",
+        "value": "Relates an element to another it references (e.g., links, images, footnotes).",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "type": "uri",
+        "value": "n3-3"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "type": "uri",
+        "value": "n3-6"
+      }
+    ]
+  },
+  "n3-3": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/2002/07/owl#Class"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#unionOf": [
+      {
+        "type": "uri",
+        "value": "n3-4"
+      }
+    ]
+  },
+  "n3-4": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#first": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#InlineElement"
+      }
+    ],
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest": [
+      {
+        "type": "uri",
+        "value": "n3-5"
+      }
+    ]
+  },
+  "n3-5": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#first": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#BlockElement"
+      }
+    ],
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"
+      }
+    ]
+  },
+  "n3-6": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/2002/07/owl#Class"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#unionOf": [
+      {
+        "type": "uri",
+        "value": "n3-7"
+      }
+    ]
+  },
+  "n3-7": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#first": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#InlineElement"
+      }
+    ],
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest": [
+      {
+        "type": "uri",
+        "value": "n3-8"
+      }
+    ]
+  },
+  "n3-8": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#first": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#BlockElement"
+      }
+    ],
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"
+      }
+    ]
+  },
+  "http://example.org/markdown#hasChild": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/2002/07/owl#ObjectProperty"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "type": "literal",
+        "value": "has Child",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "type": "literal",
+        "value": "Relates a parent element to its child (e.g., nested lists, blockquotes).",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#BlockElement"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#BlockElement"
+      }
+    ]
+  },
+  "http://example.org/markdown#hasParent": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/2002/07/owl#ObjectProperty"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "type": "literal",
+        "value": "has Parent",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "type": "literal",
+        "value": "Relates a child element to its parent.",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#BlockElement"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#BlockElement"
+      }
+    ]
+  },
+  "http://example.org/markdown#supportedIn": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/2002/07/owl#DatatypeProperty"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "type": "literal",
+        "value": "supported In",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#comment": [
+      {
+        "type": "literal",
+        "value": "Indicates which Markdown variant(s) support this feature (e.g., 'GFM', 'Obsidian', 'Standard').",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#domain": [
+      {
+        "type": "uri",
+        "value": "n3-9"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#range": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/2000/01/rdf-schema#Literal"
+      }
+    ]
+  },
+  "n3-9": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/2002/07/owl#Class"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#unionOf": [
+      {
+        "type": "uri",
+        "value": "n3-10"
+      }
+    ]
+  },
+  "n3-10": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#first": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#BlockElement"
+      }
+    ],
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest": [
+      {
+        "type": "uri",
+        "value": "n3-11"
+      }
+    ]
+  },
+  "n3-11": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#first": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#InlineElement"
+      }
+    ],
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#rest": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/1999/02/22-rdf-syntax-ns#nil"
+      }
+    ]
+  },
+  "http://example.org/markdown#exampleDoc1": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#Document"
+      }
+    ],
+    "http://example.org/markdown#hasBlock": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#exampleHeading1"
+      },
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#examplePara1"
+      },
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#exampleList1"
+      },
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#exampleFrontmatter1"
+      }
+    ]
+  },
+  "http://example.org/markdown#exampleHeading1": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#Heading"
+      }
+    ],
+    "http://example.org/markdown#level": [
+      {
+        "type": "literal",
+        "value": "1",
+        "datatype": "http://www.w3.org/2001/XMLSchema#integer"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "type": "literal",
+        "value": "Example Heading",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ]
+  },
+  "http://example.org/markdown#examplePara1": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#Paragraph"
+      }
+    ],
+    "http://example.org/markdown#hasInline": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#exampleLink1"
+      },
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#exampleWikilink1"
+      }
+    ]
+  },
+  "http://example.org/markdown#exampleLink1": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#Link"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "type": "literal",
+        "value": "GitHub",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://example.org/markdown#references": [
+      {
+        "type": "uri",
+        "value": "https://github.com/"
+      }
+    ]
+  },
+  "http://example.org/markdown#exampleWikilink1": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#Wikilink"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "type": "literal",
+        "value": "HomePage",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ],
+    "http://example.org/markdown#references": [
+      {
+        "type": "uri",
+        "value": "obsidian://HomePage"
+      }
+    ]
+  },
+  "http://example.org/markdown#exampleList1": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#List"
+      }
+    ],
+    "http://example.org/markdown#hasChild": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#exampleTask1"
+      }
+    ]
+  },
+  "http://example.org/markdown#exampleTask1": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#TaskList"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "type": "literal",
+        "value": "[x] Write ontology",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ]
+  },
+  "http://example.org/markdown#exampleFrontmatter1": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#Frontmatter"
+      }
+    ],
+    "http://www.w3.org/2000/01/rdf-schema#label": [
+      {
+        "type": "literal",
+        "value": "---\ntitle: Example\n---",
+        "datatype": "http://www.w3.org/2001/XMLSchema#string"
+      }
+    ]
+  },
+  "http://example.org/markdown#HeadingConstraint": {
+    "http://www.w3.org/1999/02/22-rdf-syntax-ns#type": [
+      {
+        "type": "uri",
+        "value": "http://www.w3.org/2002/07/owl#Restriction"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#onProperty": [
+      {
+        "type": "uri",
+        "value": "http://example.org/markdown#level"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#minInclusive": [
+      {
+        "type": "literal",
+        "value": "1",
+        "datatype": "http://www.w3.org/2001/XMLSchema#integer"
+      }
+    ],
+    "http://www.w3.org/2002/07/owl#maxInclusive": [
+      {
+        "type": "literal",
+        "value": "6",
+        "datatype": "http://www.w3.org/2001/XMLSchema#integer"
+      }
+    ]
+  }
+}

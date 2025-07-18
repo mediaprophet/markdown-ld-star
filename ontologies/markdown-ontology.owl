@@ -1,3 +1,4 @@
+
 <?xml version="1.0"?>
 <rdf:RDF
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
@@ -21,6 +22,117 @@
   xmlns:tzont="http://www.w3.org/2006/timezone#"
 >
 
-...existing ontology content...
+  <owl:Ontology rdf:about="http://example.org/markdown-owl">
+    <rdfs:comment>OWL ontology for Markdown variants and sameAs mappings to common RDF ontologies.</rdfs:comment>
+  </owl:Ontology>
+
+
+  <!-- Markdown Classes -->
+  <owl:Class rdf:about="http://example.org/markdown#Markdown">
+    <owl:sameAs rdf:resource="http://purl.org/dc/terms/Text"/>
+    <owl:sameAs rdf:resource="http://schema.org/CreativeWork"/>
+    <owl:sameAs rdf:resource="http://ogp.me/ns#article"/>
+    <owl:sameAs rdf:resource="http://xmlns.com/foaf/0.1/Document"/>
+    <owl:sameAs rdf:resource="http://www.w3.org/ns/prov#Entity"/>
+    <owl:sameAs rdf:resource="http://usefulinc.com/ns/doap#Project"/>
+    <owl:sameAs rdf:resource="http://purl.org/goodrelations/v1#ProductOrService"/>
+    <owl:sameAs rdf:resource="http://www.w3.org/2004/02/skos/core#Concept"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://example.org/markdown#GitHubFlavoredMarkdown">
+    <rdfs:subClassOf rdf:resource="http://example.org/markdown#Markdown"/>
+    <owl:sameAs rdf:resource="http://schema.org/Article"/>
+    <owl:sameAs rdf:resource="http://ogp.me/ns#article"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://example.org/markdown#StandardMarkdown">
+    <rdfs:subClassOf rdf:resource="http://example.org/markdown#Markdown"/>
+    <owl:sameAs rdf:resource="http://purl.org/dc/terms/Text"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://example.org/markdown#ObsidianMarkdown">
+    <rdfs:subClassOf rdf:resource="http://example.org/markdown#Markdown"/>
+    <owl:sameAs rdf:resource="http://schema.org/CreativeWork"/>
+  </owl:Class>
+
+  <!-- Example Markdown Elements and Mappings -->
+  <owl:Class rdf:about="http://example.org/markdown#Image">
+    <owl:sameAs rdf:resource="http://schema.org/ImageObject"/>
+    <owl:sameAs rdf:resource="http://ogp.me/ns#image"/>
+    <owl:sameAs rdf:resource="http://xmlns.com/foaf/0.1/Image"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://example.org/markdown#Link">
+    <owl:sameAs rdf:resource="http://schema.org/URL"/>
+    <owl:sameAs rdf:resource="http://ogp.me/ns#url"/>
+    <owl:sameAs rdf:resource="http://xmlns.com/foaf/0.1/page"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://example.org/markdown#Heading">
+    <owl:sameAs rdf:resource="http://purl.org/dc/terms/title"/>
+    <owl:sameAs rdf:resource="http://schema.org/headline"/>
+    <owl:sameAs rdf:resource="http://ogp.me/ns#title"/>
+    <owl:sameAs rdf:resource="http://www.w3.org/2004/02/skos/core#prefLabel"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://example.org/markdown#Paragraph">
+    <owl:sameAs rdf:resource="http://schema.org/description"/>
+    <owl:sameAs rdf:resource="http://purl.org/dc/terms/description"/>
+    <owl:sameAs rdf:resource="http://ogp.me/ns#description"/>
+    <owl:sameAs rdf:resource="http://www.w3.org/2004/02/skos/core#definition"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://example.org/markdown#CodeBlock">
+    <owl:sameAs rdf:resource="http://schema.org/SoftwareSourceCode"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://example.org/markdown#Table">
+    <owl:sameAs rdf:resource="http://schema.org/Table"/>
+  </owl:Class>
+
+  <!-- Example properties and mappings -->
+  <owl:DatatypeProperty rdf:about="http://example.org/markdown#label">
+    <rdfs:label>label</rdfs:label>
+    <rdfs:comment>Human-readable label for a Markdown element.</rdfs:comment>
+    <rdfs:subPropertyOf rdfs:label/>
+    <owl:equivalentProperty rdf:resource="http://schema.org/name"/>
+    <owl:equivalentProperty rdf:resource="http://purl.org/dc/elements/1.1/title"/>
+    <owl:equivalentProperty rdf:resource="http://ogp.me/ns#title"/>
+    <owl:equivalentProperty rdf:resource="http://www.w3.org/2004/02/skos/core#prefLabel"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://example.org/markdown#url">
+    <rdfs:label>url</rdfs:label>
+    <rdfs:comment>URL for a link or image.</rdfs:comment>
+    <owl:equivalentProperty rdf:resource="http://schema.org/url"/>
+    <owl:equivalentProperty rdf:resource="http://ogp.me/ns#url"/>
+    <owl:equivalentProperty rdf:resource="http://xmlns.com/foaf/0.1/page"/>
+  </owl:DatatypeProperty>
+  <owl:DatatypeProperty rdf:about="http://example.org/markdown#description">
+    <rdfs:label>description</rdfs:label>
+    <rdfs:comment>Description or summary of a Markdown element.</rdfs:comment>
+    <owl:equivalentProperty rdf:resource="http://schema.org/description"/>
+    <owl:equivalentProperty rdf:resource="http://purl.org/dc/terms/description"/>
+    <owl:equivalentProperty rdf:resource="http://ogp.me/ns#description"/>
+    <owl:equivalentProperty rdf:resource="http://www.w3.org/2004/02/skos/core#definition"/>
+  </owl:DatatypeProperty>
+  <owl:ObjectProperty rdf:about="http://example.org/markdown#hasExtension"/>
+
+  <!-- Example: Creative Commons, vCard, iCal, Workflow, Time, Timezone -->
+  <owl:Class rdf:about="http://creativecommons.org/ns#License"/>
+  <owl:Class rdf:about="http://www.w3.org/2006/vcard/ns#VCard"/>
+  <owl:Class rdf:about="http://www.w3.org/2002/12/cal/ical#Vcalendar"/>
+  <owl:Class rdf:about="http://www.w3.org/2005/01/wf/flow#Workflow"/>
+  <owl:Class rdf:about="http://www.w3.org/2006/time#TemporalEntity"/>
+  <owl:Class rdf:about="http://www.w3.org/2006/timezone#TimeZone"/>
+
+  <!-- sameAs mappings to common RDF ontologies -->
+  <owl:Class rdf:about="http://example.org/markdown#Markdown">
+    <owl:sameAs rdf:resource="http://purl.org/dc/terms/Text"/>
+    <owl:sameAs rdf:resource="http://schema.org/CreativeWork"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://example.org/markdown#GitHubFlavoredMarkdown">
+    <owl:sameAs rdf:resource="http://schema.org/Article"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://example.org/markdown#StandardMarkdown">
+    <owl:sameAs rdf:resource="http://purl.org/dc/terms/Text"/>
+  </owl:Class>
+  <owl:Class rdf:about="http://example.org/markdown#ObsidianMarkdown">
+    <owl:sameAs rdf:resource="http://schema.org/CreativeWork"/>
+  </owl:Class>
+
+  <!-- Example property -->
+  <owl:ObjectProperty rdf:about="http://example.org/markdown#hasExtension"/>
 
 </rdf:RDF>

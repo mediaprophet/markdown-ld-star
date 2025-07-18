@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Build and Deploy to GitHub Pages
 
 on:
   push:
@@ -8,7 +8,7 @@ permissions:
   contents: write
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout 🛎️
@@ -20,31 +20,16 @@ jobs:
           node-version: '20'
           cache: 'npm'
 
-      - name: Install Dependencies 📦
+      - name: Install dependencies 📦
         run: npm ci
 
-      - name: Build Pages using Vite 🔨
-        # This script uses vite.config.js to build the site into the /docs directory
-        run: |
-          echo "Running npm run build (Vite):"
-          npm run build || { echo 'Vite build failed!'; exit 1; }
+      - name: Build site 🔨
+        run: npm run build
 
-      - name: Debug Build Output 📋
-        run: |
-          echo "Listing docs directory after build:"
-          ls -la docs
-          if [ ! "$(ls -A docs)" ]; then
-            echo "ERROR: docs directory is empty after build!" >&2
-            exit 1
-          fi
-
-
-      - name: Verify Build Output 🔍
-        run: ls -la docs docs/ontologies
-
-      - name: Deploy to GitHub Pages 🚀
-        uses: JamesIves/github-pages-deploy-action@v4
+      - name: Deploy �
+        uses: peaceiris/actions-gh-pages@v4
         with:
-          # Deploy the 'docs' folder, which is the output from the Vite build
-          folder: docs
-          token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: docs
+          publish_branch: gh-pages
+          force_orphan: true

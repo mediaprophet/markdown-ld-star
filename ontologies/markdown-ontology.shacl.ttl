@@ -1,0 +1,36 @@
+@prefix sh: <http://www.w3.org/ns/shacl#> .
+@prefix md: <http://example.org/markdown#> .
+@prefix xsd: <http://www.w3.org/2001/XMLSchema#> .
+
+md:HeadingShape a sh:NodeShape ;
+  sh:targetClass md:Heading ;
+  sh:property [
+    sh:path md:level ;
+    sh:datatype xsd:integer ;
+    sh:minInclusive 1 ;
+    sh:maxInclusive 6 ;
+  ] .
+
+md:DocumentShape a sh:NodeShape ;
+  sh:targetClass md:Document ;
+  sh:property [
+    sh:path md:hasBlock ;
+    sh:class md:BlockElement ;
+    sh:minCount 1 ;
+  ] .
+
+md:BlockElementShape a sh:NodeShape ;
+  sh:targetClass md:BlockElement ;
+  sh:property [
+    sh:path md:hasInline ;
+    sh:class md:InlineElement ;
+    sh:minCount 0 ;
+  ] .
+
+md:InlineElementShape a sh:NodeShape ;
+  sh:targetClass md:InlineElement ;
+  sh:property [
+    sh:path md:syntaxRule ;
+    sh:datatype xsd:string ;
+    sh:minCount 0 ;
+  ] .

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Markdown-LD* API Demo</title>
+  <script src="../index.browser.js"></script>
+  <link rel="stylesheet" href="api-style.css">
+</head>
+<body>
+  <h1>Markdown-LD* API Demo</h1>
+  <p>This page demonstrates API-like usage of the playground via URL parameters.<br>
+  See the <a href="../README.md">README</a> for full documentation.</p>
+  <div style="margin-bottom:1em; background:#23234a; padding:0.7em; border-radius:6px; color:#e6e6ff;">
+    <b>Markdown Syntax Ontology:</b>
+    <a href="../src/markdown-ontology.ttl" target="_blank">Turtle</a> |
+    <a href="../src/markdown-ontology.owl" target="_blank">OWL (sameAs mappings)</a> —
+    <span title="Standard Markdown">Standard</span>,
+    <span title="GitHub Flavored Markdown">GFM</span>,
+    <span title="Obsidian Markdown">Obsidian</span>
+    <br>
+    Use this ontology to annotate or parse Markdown documents by variant and features. The OWL file includes <code>owl:sameAs</code> links to common RDF ontologies.
+  </div>
+  <form id="apiForm" style="margin-bottom:1em; background:#23234a; padding:1em; border-radius:6px; color:#e6e6ff;">
+    <label>RDF URI: <input type="text" id="uriInput" style="width: 60%;" placeholder="Enter RDF URI (e.g., https://example.org/data.ttl)"></label><br><br>
+    <label>Field: <input type="text" id="fieldInput" style="width: 30%;" placeholder="e.g., foaf:name"></label><br><br>
+    <label>Input Format:
+      <select id="inputFormat">
+        <option value="turtle">Turtle</option>
+        <option value="jsonld">JSON-LD</option>
+        <option value="rdfjson">RDF/JSON</option>
+        <option value="jsonldstar">JSON-LD*</option>
+        <option value="n3">N3</option>
+        <option value="trig">TriG</option>
+      </select>
+    </label>
+    <label style="margin-left:2em;">Output Format:
+      <select id="outputFormat">
+        <option value="markdownld">Markdown-LD*</option>
+        <option value="json">JSON</option>
+        <option value="turtle">Turtle</option>
+      </select>
+    </label>
+    <button type="submit" style="margin-left:2em;">Query</button>
+  </form>
+  <div id="errorDisplay" style="color: #ff6666; display: none; margin-bottom: 10px;"></div>
+  <pre id="apiOutput" style="overflow-x: auto; max-width: 100%; background: #222233; color: #e6e6ff; padding: 1em; border-radius: 6px;"></pre>
+  <script>
+    function showError(msg) {
+      const errorDisplay = document.getElementById('errorDisplay');
+      errorDisplay.textContent = 'Error: ' + msg;
+      errorDisplay.style.display = 'block';
+    }
+    function clearError() {
+      const errorDisplay = document.getElementById('errorDisplay');
+      errorDisplay.textContent = '';
+      errorDisplay.style.display = 'none';
+    }
+    // Form handler: update URL and reload
+    document.getElementById('apiForm').onsubmit = function(e) {
+      e.preventDefault();
+      const uri = document.getElementById('uriInput').value.trim();
+      const field = document.getElementById('fieldInput').value.trim();
+      const inputFormat = document.getElementById('inputFormat').value;
+      const outputFormat = document.getElementById('outputFormat').value;
+      if (!uri) {
+        showError('Please provide a URI.');
+        return;
+      }
+      clearError();
+      const params = new URLSearchParams({ uri, field, inputFormat, outputFormat });
+      window.location.search = params.toString();
+    };
+
+    (async function apiQueryFromUrl() {
+      const params = new URLSearchParams(window.location.search);
+      const uri = params.get('uri');
+      const field = params.get('field');
+      const inputFormat = params.get('inputFormat');
+      let outputFormat = (params.get('outputFormat') || 'markdownld').toLowerCase();
+      if (outputFormat === 'markdown-ld-star') outputFormat = 'markdownld';
+      if (uri) {
+        try {
+          const corsProxy = 'https://corsproxy.io/?';
+          const response = await fetch(corsProxy + encodeURIComponent(uri));
+          if (!response.ok) throw new Error('Fetch failed');
+          const content = await response.text();
+          if (field) {
+            const jsonld = await MarkdownLDStar.fromRDFToMarkdownLD(content, inputFormat);
+            const data = typeof jsonld === 'string' ? JSON.parse(jsonld) : jsonld;
+            let value = null;
+            if (data && data['@graph']) {
+              for (const node of data['@graph']) {
+                if (node[field]) {
+                  value = node[field];
+                  break;
+                }
+              }
+            }
+            let output = '';
+            if (outputFormat === 'json') {
+              output = JSON.stringify({ [field]: value }, null, 2);
+            } else if (outputFormat === 'turtle') {
+              output = `<#this> ${field} \"${value}\" .`;
+            } else if (outputFormat === 'markdownld') {
+              output = `[<#this>]{${field}=\"${value}\"}`;
+            } else {
+              output = `[<#this>]{${field}=\"${value}\"}`;
+            }
+            document.getElementById('apiOutput').textContent = output;
+          } else {
+            // Render the whole file as Markdown-LD*
+            const md = await MarkdownLDStar.fromRDFToMarkdownLD(content, inputFormat);
+            document.getElementById('apiOutput').textContent = md;
+          }
+        } catch (e) {
+          showError(e.message);
+        }
+      }
+    })();
+  </script>
+</body>
+</html>

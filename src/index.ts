@@ -21,9 +21,9 @@ import { unified } from 'unified';
 import remarkParse from 'remark-parse';
 import remarkStringify from 'remark-stringify';
 import jsonld from 'jsonld';
-import Serializer from '@rdfjs/serializer-jsonld';
-import { Readable } from 'stream';
-import { Quad, Term } from '@rdfjs/types';
+// import Serializer from '@rdfjs/serializer-jsonld';
+// import { Readable } from 'stream';
+// import { Quad, Term } from '@rdfjs/types';
 
 
 // Use the DataFactory from N3 for all N3 operations.
